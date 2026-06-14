@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KINO AI — Panel de administración</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a26;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --accent: #6c63ff;
+    --accent2: #4fc3f7;
+    --accent-glow: rgba(108,99,255,0.15);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+
+  .box {
+    max-width: 520px; width: 100%;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem;
+  }
+
+  h1 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  input, textarea {
+    width: 100%; padding: 0.7rem 0.9rem; margin-bottom: 0.75rem;
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: 8px; color: var(--text); font-size: 0.92rem;
+    font-family: inherit;
+  }
+
+  textarea { min-height: 140px; resize: vertical; }
+
+  input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+
+  .btn {
+    background: var(--accent); color: #fff;
+    padding: 0.75rem 1.5rem; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 600;
+    border: none; cursor: pointer; width: 100%;
+  }
+
+  .btn:disabled { opacity: 0.5; cursor: default; }
+
+  .msg { font-size: 0.85rem; margin-top: 0.75rem; min-height: 1.2em; }
+  .msg.ok { color: #4fc3f7; }
+  .msg.err { color: #ff7b7b; }
+
+  .subs-list {
+    margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;
+  }
+
+  .subs-list h2 { font-size: 1rem; margin-bottom: 0.75rem; }
+  .subs-list ul { list-style: none; font-size: 0.85rem; color: var(--muted); }
+  .subs-list li { padding: 0.3rem 0; border-bottom: 1px solid var(--border); }
+
+  .progress { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<div class="box" id="box">
+  <p>Cargando...</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://vqlpsaacopcnzeukyhtn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbHBzYWFjb3BjbnpldWt5aHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MTk4MjcsImV4cCI6MjA5Njk5NTgyN30.1CLZdqD2NZZIf0cSRrTyEWVcZhrbR2GbhsYi7nkl1HE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const ADMIN_EMAIL = 'kinoaisystems@gmail.com';
+const EMAILJS_SERVICE_ID = 'service_8q4t51s';
+const EMAILJS_TEMPLATE_ID = 'template_wdom4ur';
+const EMAILJS_PUBLIC_KEY = 'AxYozHcrnb4ZtjwXx';
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+const box = document.getElementById('box');
+
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+
+  if (!session || !session.user) {
+    renderLogin();
+    return;
+  }
+
+  if (session.user.email !== ADMIN_EMAIL) {
+    box.innerHTML = `
+      <h1>Acceso denegado</h1>
+      <p class="sub">Esta cuenta (${session.user.email}) no tiene permisos de administrador.</p>
+      <button class="btn" id="logout-btn" style="margin-top:1rem;">Cerrar sesión</button>
+    `;
+    document.getElementById('logout-btn').onclick = async () => {
+      await sb.auth.signOut();
+      init();
+    };
+    return;
+  }
+
+  renderAdmin(session);
+}
+
+function renderLogin() {
+  box.innerHTML = `
+    <h1>Panel de administración</h1>
+    <p class="sub">Iniciá sesión con la cuenta de administrador.</p>
+    <input type="email" id="email" placeholder="Email" autocomplete="email" />
+    <input type="password" id="password" placeholder="Contraseña" autocomplete="current-password" />
+    <button class="btn" id="login-btn">Iniciar sesión</button>
+    <div class="msg" id="msg"></div>
+  `;
+
+  document.getElementById('login-btn').onclick = async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const msgEl = document.getElementById('msg');
+    msgEl.textContent = '';
+    msgEl.className = 'msg';
+
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      msgEl.textContent = 'Error: ' + error.message;
+      msgEl.classList.add('err');
+    } else {
+      init();
+    }
+  };
+}
+
+async function renderAdmin(session) {
+  const { data: subs, error } = await sb.from('subscribers').select('email, created_at').order('created_at', { ascending: false });
+
+  const subsCount = subs ? subs.length : 0;
+  const subsListHtml = (subs || []).map(s =>
+    `<li>${s.email} <span style="opacity:0.6">— ${new Date(s.created_at).toLocaleDateString()}</span></li>`
+  ).join('');
+
+  box.innerHTML = `
+    <h1>Panel de administración</h1>
+    <p class="sub">Conectado como ${session.user.email}</p>
+
+    <input type="text" id="subject" placeholder="Asunto del email (ej: KINO AI v3.3 disponible)" />
+    <textarea id="body" placeholder="Mensaje para los suscriptores..."></textarea>
+    <button class="btn" id="send-btn">Enviar a ${subsCount} suscriptor(es)</button>
+    <div class="msg" id="msg"></div>
+    <div class="progress" id="progress"></div>
+
+    <div class="subs-list">
+      <h2>Suscriptores (${subsCount})</h2>
+      <ul>${subsListHtml || '<li>No hay suscriptores todavía.</li>'}</ul>
+    </div>
+
+    <button class="btn" id="logout-btn" style="margin-top:1.5rem; background:transparent; border:1px solid var(--border2);">Cerrar sesión</button>
+  `;
+
+  document.getElementById('logout-btn').onclick = async () => {
+    await sb.auth.signOut();
+    init();
+  };
+
+  document.getElementById('send-btn').onclick = async () => {
+    const subject = document.getElementById('subject').value.trim();
+    const body = document.getElementById('body').value.trim();
+    const msgEl = document.getElementById('msg');
+    const progressEl = document.getElementById('progress');
+    const sendBtn = document.getElementById('send-btn');
+
+    msgEl.textContent = '';
+    msgEl.className = 'msg';
+
+    if (!subject || !body) {
+      msgEl.textContent = 'Completá el asunto y el mensaje.';
+      msgEl.classList.add('err');
+      return;
+    }
+
+    if (!subs || subs.length === 0) {
+      msgEl.textContent = 'No hay suscriptores para notificar.';
+      msgEl.classList.add('err');
+      return;
+    }
+
+    if (!confirm(`¿Enviar este mensaje a ${subs.length} suscriptor(es)?`)) return;
+
+    sendBtn.disabled = true;
+    let sent = 0, failed = 0;
+
+    for (const s of subs) {
+      progressEl.textContent = `Enviando... ${sent + failed} / ${subs.length}`;
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email: s.email,
+          subject: subject,
+          message: body,
+        });
+        sent++;
+      } catch (e) {
+        failed++;
+      }
+      await new Promise(r => setTimeout(r, 600));
+    }
+
+    progressEl.textContent = '';
+    msgEl.textContent = `Enviados: ${sent}. Fallidos: ${failed}.`;
+    msgEl.classList.add(failed === 0 ? 'ok' : 'err');
+    sendBtn.disabled = false;
+  };
+}
+
+init();
+</script>
+
+</body>
+</html>
