@@ -289,6 +289,60 @@
   .req-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.2rem; }
   .req-val { font-size: 0.92rem; font-weight: 500; }
 
+  /* STEPS */
+  .steps-grid {
+    display: grid; gap: 1rem;
+  }
+
+  .step-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem 1.5rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+
+  .step-num {
+    flex-shrink: 0; width: 32px; height: 32px;
+    border-radius: 50%; background: var(--accent-glow);
+    border: 1px solid rgba(108,99,255,0.3); color: #a89fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.95rem;
+  }
+
+  .step-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+  .step-desc a { color: var(--accent2); text-decoration: underline; }
+
+  /* FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .faq-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0;
+  }
+
+  .faq-item summary {
+    cursor: pointer; padding: 1rem 1.25rem;
+    font-size: 0.95rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: space-between;
+    list-style: none;
+  }
+
+  .faq-item summary::-webkit-details-marker { display: none; }
+
+  .faq-item summary::after {
+    content: '+'; color: var(--accent); font-size: 1.2rem; font-weight: 400;
+    margin-left: 1rem; flex-shrink: 0;
+  }
+
+  .faq-item[open] summary::after { content: '−'; }
+
+  .faq-answer {
+    padding: 0 1.25rem 1.1rem;
+    font-size: 0.88rem; color: var(--muted); line-height: 1.7;
+  }
+
+  .faq-answer a { color: var(--accent2); text-decoration: underline; }
+
   /* CTA */
   .cta-section {
     text-align: center;
@@ -338,8 +392,12 @@
   <div class="nav-links">
     <a href="#features" data-lang="es">Funciones</a>
     <a href="#features" data-lang="en">Features</a>
+    <a href="#primeros-pasos" data-lang="es">Primeros pasos</a>
+    <a href="#primeros-pasos" data-lang="en">Getting started</a>
     <a href="#requisitos" data-lang="es">Requisitos</a>
     <a href="#requisitos" data-lang="en">Requirements</a>
+    <a href="#faq" data-lang="es">Preguntas frecuentes</a>
+    <a href="#faq" data-lang="en">FAQ</a>
     <a href="#descargar" data-lang="es">Descargar</a>
     <a href="#descargar" data-lang="en">Download</a>
   </div>
@@ -556,6 +614,125 @@
   </div>
 </section>
 
+<!-- PRIMEROS PASOS -->
+<section class="section" id="primeros-pasos">
+  <p class="section-label" data-lang="es">Guía rápida</p>
+  <p class="section-label" data-lang="en" style="display:none">Quick guide</p>
+  <h2 class="section-title" data-lang="es">Primeros pasos</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">Getting started</h2>
+  <p class="section-sub" data-lang="es">En pocos minutos vas a tener a KINO funcionando en tu PC. Por ahora el instalador de un clic es solo para Windows.</p>
+  <p class="section-sub" data-lang="en" style="display:none">In a few minutes you'll have KINO running on your PC. The one-click installer is currently Windows only.</p>
+
+  <div class="steps-grid">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title" data-lang="es">Descargá el instalador</div>
+        <div class="step-title" data-lang="en" style="display:none">Download the installer</div>
+        <div class="step-desc" data-lang="es">Hacé clic en "Descargar KINO AI gratis" más abajo y completá el formulario para recibir el link.</div>
+        <div class="step-desc" data-lang="en" style="display:none">Click "Download KINO AI free" below and fill out the form to receive the link.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title" data-lang="es">Ejecutá KINO_Setup.exe</div>
+        <div class="step-title" data-lang="en" style="display:none">Run KINO_Setup.exe</div>
+        <div class="step-desc" data-lang="es">Si Windows muestra una advertencia de SmartScreen, hacé clic en "Más información" y luego en "Ejecutar de todas formas". Es normal en instaladores sin firma paga.</div>
+        <div class="step-desc" data-lang="en" style="display:none">If Windows shows a SmartScreen warning, click "More info" and then "Run anyway". This is normal for installers without a paid signature.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title" data-lang="es">Conseguí tu Gemini API key</div>
+        <div class="step-title" data-lang="en" style="display:none">Get your Gemini API key</div>
+        <div class="step-desc" data-lang="es">Entrá a <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">ai.google.dev</a> con tu cuenta de Google y generá una key gratis. KINO la usa para entender y responder.</div>
+        <div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">ai.google.dev</a> with your Google account and generate a free key. KINO uses it to understand and respond.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title" data-lang="es">Conseguí tu OpenRouter API key</div>
+        <div class="step-title" data-lang="en" style="display:none">Get your OpenRouter API key</div>
+        <div class="step-desc" data-lang="es">Entrá a <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, creá una cuenta gratis y generá tu key. Se usa como respaldo y para tareas adicionales.</div>
+        <div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, create a free account and generate your key. It's used as a backup and for extra tasks.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title" data-lang="es">Pegá tus keys y listo</div>
+        <div class="step-title" data-lang="en" style="display:none">Paste your keys and you're set</div>
+        <div class="step-desc" data-lang="es">Al abrir KINO por primera vez, pegá ambas keys, elegí tu sistema operativo y hacé clic en "Initialise Systems". ¡Ya podés empezar a hablarle!</div>
+        <div class="step-desc" data-lang="en" style="display:none">When you open KINO for the first time, paste both keys, pick your operating system and click "Initialise Systems". You're ready to start talking to it!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <p class="section-label" data-lang="es">Ayuda</p>
+  <p class="section-label" data-lang="en" style="display:none">Help</p>
+  <h2 class="section-title" data-lang="es">Preguntas frecuentes</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">Frequently asked questions</h2>
+  <p class="section-sub" data-lang="es">Lo que más nos preguntan sobre KINO.</p>
+  <p class="section-sub" data-lang="en" style="display:none">What people ask us most about KINO.</p>
+
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary data-lang="es">Windows me muestra una advertencia al instalar, ¿es seguro?</summary>
+      <summary data-lang="en" style="display:none">Windows shows a warning when installing, is it safe?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Sí. Esa advertencia (SmartScreen) aparece porque KINO es una app nueva sin firma digital paga, no porque tenga algo malicioso. Hacé clic en "Más información" y luego en "Ejecutar de todas formas" para continuar con la instalación.</span>
+        <span data-lang="en" style="display:none">Yes. That warning (SmartScreen) appears because KINO is a new app without a paid digital signature, not because it's malicious. Click "More info" and then "Run anyway" to continue with the installation.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿KINO es realmente gratis?</summary>
+      <summary data-lang="en" style="display:none">Is KINO really free?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Sí, KINO en sí es 100% gratis, sin suscripciones ni tarjetas de crédito. Necesitás tus propias API keys de Gemini y OpenRouter, ambas con planes gratuitos generosos que cubren un uso normal.</span>
+        <span data-lang="en" style="display:none">Yes, KINO itself is 100% free, with no subscriptions or credit cards. You'll need your own Gemini and OpenRouter API keys, both with generous free tiers that cover normal usage.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿Mis conversaciones o datos se guardan en algún servidor?</summary>
+      <summary data-lang="en" style="display:none">Are my conversations or data stored on any server?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">No. KINO Systems no tiene servidores propios ni almacena tus conversaciones. Todo queda guardado localmente en tu computadora. Las únicas conexiones externas son las que hace KINO directamente con Gemini y OpenRouter usando tus propias keys.</span>
+        <span data-lang="en" style="display:none">No. KINO Systems doesn't have its own servers and doesn't store your conversations. Everything stays saved locally on your computer. The only external connections are the ones KINO makes directly with Gemini and OpenRouter using your own keys.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿Funciona en Mac o Linux?</summary>
+      <summary data-lang="en" style="display:none">Does it work on Mac or Linux?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">El instalador de un clic (.exe) es por ahora solo para Windows. KINO está hecho en Python y es multiplataforma, así que en Mac o Linux se puede correr desde el código fuente, aunque requiere algo más de conocimiento técnico (instalar Python y dependencias).</span>
+        <span data-lang="en" style="display:none">The one-click installer (.exe) is currently Windows only. KINO is built in Python and is cross-platform, so on Mac or Linux it can be run from source code, though it requires a bit more technical knowledge (installing Python and dependencies).</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">Encontré un error o algo no funciona, ¿qué hago?</summary>
+      <summary data-lang="en" style="display:none">I found a bug or something isn't working, what do I do?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Dentro de la app, abajo a la derecha, hay un botón "Reportar problema" que abre un correo prellenado con los datos necesarios para ayudarte más rápido. También podés escribirnos directamente a <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a>.</span>
+        <span data-lang="en" style="display:none">Inside the app, in the bottom right, there's a "Report issue" button that opens a pre-filled email with the info needed to help you faster. You can also write to us directly at <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a>.</span>
+      </div>
+    </details>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section" id="descargar">
   <h2 data-lang="es">Listo para empezar?</h2>
@@ -576,7 +753,6 @@
 </section>
 
 <footer>
- <p style="margin-top: 0.5rem;"><a href="/kino-ai/privacidad" style="color: var(--muted);">Política de privacidad</a></p>
   <p>© 2026 KINO Systems · <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a></p>
   <p style="margin-top: 0.5rem;">
     <span data-lang="es">No afiliado a Google, OpenRouter ni ningún otro proveedor de IA.</span>
