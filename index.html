@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KINO AI — Tu asistente personal de IA</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a26;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --accent: #6c63ff;
+    --accent2: #4fc3f7;
+    --accent-glow: rgba(108,99,255,0.15);
+    --nav-bg: rgba(10,10,15,0.85);
+  }
+
+  body.light {
+    --bg: #f7f7fb;
+    --bg2: #ffffff;
+    --bg3: #eeeef5;
+    --border: rgba(20,20,40,0.08);
+    --border2: rgba(20,20,40,0.15);
+    --text: #14141f;
+    --muted: #6b6b85;
+    --accent: #6c63ff;
+    --accent2: #2b8fc7;
+    --accent-glow: rgba(108,99,255,0.10);
+    --nav-bg: rgba(255,255,255,0.85);
+  }
+
+  body { transition: background 0.2s, color 0.2s; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-size: 1.1rem; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--text);
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; color: var(--muted); align-items: center; }
+  .nav-links a:hover { color: var(--text); }
+
+  .lang-toggle {
+    display: flex; gap: 0.5rem;
+  }
+
+  .lang-btn {
+    background: none; border: 1px solid var(--border2); color: var(--muted);
+    padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active, .lang-btn:hover {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+  .theme-btn {
+    background: none; border: 1px solid var(--border2); color: var(--muted);
+    width: 32px; height: 32px; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .theme-btn:hover { background: var(--bg3); color: var(--text); }
+
+  .menu-btn {
+    display: none;
+    background: none; border: 1px solid var(--border2); color: var(--text);
+    width: 32px; height: 32px; border-radius: 6px; cursor: pointer;
+    align-items: center; justify-content: center; font-size: 1.1rem;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+    background: var(--nav-bg); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column; padding: 1rem 2rem; gap: 1rem;
+    font-size: 0.95rem; color: var(--muted);
+  }
+
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-glow);
+    border: 1px solid rgba(108,99,255,0.3);
+    color: #a89fff;
+    font-size: 0.8rem; letter-spacing: 0.1em;
+    padding: 0.4rem 1rem; border-radius: 20px;
+    margin-bottom: 2rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 .k { color: var(--accent); }
+  .hero h1 .i { color: var(--accent2); }
+
+  .hero-sub {
+    font-size: 1.15rem; color: var(--muted);
+    max-width: 520px; margin: 0 auto 2.5rem;
+  }
+
+  .hero-buttons {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-size: 1rem; font-weight: 600;
+    border: none; cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent; color: var(--text);
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-size: 1rem; font-weight: 500;
+    border: 1px solid var(--border2); cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-secondary:hover { background: var(--bg3); }
+
+  .hero-note {
+    font-size: 0.82rem; color: var(--muted);
+  }
+
+  /* PREVIEW */
+  .preview {
+    width: 100%; max-width: 820px; margin: 0 auto 2rem;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+  }
+
+  .preview-bar {
+    background: var(--bg3);
+    padding: 0.6rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .preview-title {
+    flex: 1; text-align: center;
+    font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em;
+  }
+
+  .preview-content {
+    padding: 2rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+
+  .preview-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem;
+  }
+
+  .preview-box-label {
+    font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .preview-box-text {
+    font-size: 0.85rem; color: var(--muted); line-height: 1.5;
+  }
+
+  .preview-box-text strong { color: var(--text); }
+
+  .preview-mic {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 1rem;
+    background: var(--bg);
+    border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 10px; padding: 1rem 1.25rem;
+  }
+
+  .mic-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1px solid rgba(108,99,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .mic-wave {
+    display: flex; align-items: center; gap: 3px; flex: 1;
+  }
+
+  .wave-bar {
+    width: 3px; border-radius: 2px; background: var(--accent);
+    animation: wave 1s ease-in-out infinite;
+  }
+
+  .wave-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+  .wave-bar:nth-child(2) { height: 18px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { height: 22px; animation-delay: 0.15s; }
+  .wave-bar:nth-child(5) { height: 10px; animation-delay: 0.05s; }
+  .wave-bar:nth-child(6) { height: 16px; animation-delay: 0.25s; }
+  .wave-bar:nth-child(7) { height: 8px; animation-delay: 0.1s; }
+
+  @keyframes wave {
+    0%, 100% { transform: scaleY(1); opacity: 0.7; }
+    50% { transform: scaleY(1.6); opacity: 1; }
+  }
+
+  .mic-text { font-size: 0.85rem; color: var(--muted); }
+  .mic-text strong { color: var(--text); }
+
+  /* FEATURES */
+  .section {
+    max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
+  }
+
+  .section-label {
+    font-size: 0.8rem; letter-spacing: 0.12em; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--muted); font-size: 1.05rem; max-width: 480px;
+    margin-bottom: 3rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+
+  .feature-card:hover { border-color: var(--border2); }
+
+  .feature-icon {
+    width: 44px; height: 44px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem;
+  }
+
+  .feature-desc {
+    font-size: 0.88rem; color: var(--muted); line-height: 1.6;
+  }
+
+  /* REQUIREMENTS */
+  .req-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .req-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.25rem;
+    display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+
+  .req-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); margin-top: 6px; flex-shrink: 0;
+  }
+
+  .req-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.2rem; }
+  .req-val { font-size: 0.92rem; font-weight: 500; }
+
+  /* STEPS */
+  .steps-grid {
+    display: grid; gap: 1rem;
+  }
+
+  .step-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem 1.5rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+
+  .step-num {
+    flex-shrink: 0; width: 32px; height: 32px;
+    border-radius: 50%; background: var(--accent-glow);
+    border: 1px solid rgba(108,99,255,0.3); color: #a89fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.95rem;
+  }
+
+  .step-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+  .step-desc a { color: var(--accent2); text-decoration: underline; }
+
+  /* FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .faq-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0;
+  }
+
+  .faq-item summary {
+    cursor: pointer; padding: 1rem 1.25rem;
+    font-size: 0.95rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: space-between;
+    list-style: none;
+  }
+
+  .faq-item summary::-webkit-details-marker { display: none; }
+
+  .faq-item summary::after {
+    content: '+'; color: var(--accent); font-size: 1.2rem; font-weight: 400;
+    margin-left: 1rem; flex-shrink: 0;
+  }
+
+  .faq-item[open] summary::after { content: '−'; }
+
+  .faq-answer {
+    padding: 0 1.25rem 1.1rem;
+    font-size: 0.88rem; color: var(--muted); line-height: 1.7;
+  }
+
+  .faq-answer a { color: var(--accent2); text-decoration: underline; }
+
+  /* COMPARISON */
+  .cmp-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    font-size: 0.9rem;
+  }
+
+  .cmp-table th, .cmp-table td {
+    padding: 0.9rem 1rem; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cmp-table th {
+    color: var(--muted); font-size: 0.78rem; letter-spacing: 0.05em;
+    text-transform: uppercase; font-weight: 600;
+    background: var(--bg3);
+  }
+
+  .cmp-table th:first-child, .cmp-table td:first-child {
+    color: var(--text); font-weight: 500;
+  }
+
+  .cmp-table tr:last-child td { border-bottom: none; }
+
+  .cmp-table .cmp-kino { color: var(--accent2); font-weight: 600; }
+  .cmp-yes { color: #4fc3f7; }
+  .cmp-no { color: #66667a; }
+
+  .cmp-wrap { overflow-x: auto; }
+
+  @media (max-width: 600px) {
+    .cmp-table { font-size: 0.8rem; }
+    .cmp-table th, .cmp-table td { padding: 0.6rem 0.6rem; }
+  }
+
+  /* CHANGELOG */
+  .changelog-list { display: flex; flex-direction: column; gap: 1rem; }
+
+  .changelog-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem 1.5rem;
+  }
+
+  .changelog-head {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.5rem; flex-wrap: wrap;
+  }
+
+  .changelog-version {
+    display: inline-block;
+    background: var(--accent-glow);
+    border: 1px solid rgba(108,99,255,0.3);
+    color: #a89fff;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+  }
+
+  .changelog-date { font-size: 0.8rem; color: var(--muted); }
+
+  .changelog-list ul {
+    list-style: none; font-size: 0.9rem; color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .changelog-list ul li::before {
+    content: '— '; color: var(--accent2);
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 5rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .cta-section h2 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700; margin-bottom: 1rem;
+  }
+
+  .cta-section p { color: var(--muted); margin-bottom: 2rem; font-size: 1.05rem; }
+
+  /* NOTIFY / AUTH */
+  .auth-box {
+    max-width: 420px; margin: 0 auto;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.75rem;
+    text-align: left;
+  }
+
+  .auth-box input {
+    width: 100%; padding: 0.7rem 0.9rem; margin-bottom: 0.75rem;
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: 8px; color: var(--text); font-size: 0.92rem;
+    font-family: inherit;
+  }
+
+  .auth-box input:focus { outline: none; border-color: var(--accent); }
+
+  .auth-box .btn-primary { width: 100%; justify-content: center; }
+
+  .auth-msg {
+    font-size: 0.85rem; margin-top: 0.75rem; min-height: 1.2em;
+  }
+
+  .auth-msg.ok { color: #4fc3f7; }
+  .auth-msg.err { color: #ff7b7b; }
+
+  .auth-switch {
+    font-size: 0.85rem; color: var(--muted); margin-top: 1rem; text-align: center;
+  }
+
+  .auth-switch a { color: var(--accent2); text-decoration: underline; cursor: pointer; }
+
+  .auth-logged {
+    text-align: center; font-size: 0.95rem; color: var(--muted);
+  }
+
+  .auth-logged strong { color: var(--text); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.82rem; color: var(--muted);
+  }
+
+  footer a { color: var(--muted); }
+  footer a:hover { color: var(--text); }
+
+  /* LANG */
+  [data-lang="en"] { display: none; }
+  body.en [data-lang="es"] { display: none; }
+  body.en [data-lang="en"] { display: block; }
+  body.en .hero-sub[data-lang="en"],
+  body.en .feature-desc[data-lang="en"],
+  body.en .mic-text[data-lang="en"] { display: block; }
+  span[data-lang] { display: inline; }
+  body.en span[data-lang="es"] { display: none; }
+  body.en span[data-lang="en"] { display: inline; }
+
+  @media (max-width: 600px) {
+    .preview-content { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .menu-btn { display: flex; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">K<span>.</span>I<span>.</span>N<span>.</span>O</div>
+  <div class="nav-links">
+    <a href="#features" data-lang="es">Funciones</a>
+    <a href="#features" data-lang="en">Features</a>
+    <a href="#primeros-pasos" data-lang="es">Primeros pasos</a>
+    <a href="#primeros-pasos" data-lang="en">Getting started</a>
+    <a href="#requisitos" data-lang="es">Requisitos</a>
+    <a href="#requisitos" data-lang="en">Requirements</a>
+    <a href="#faq" data-lang="es">Preguntas frecuentes</a>
+    <a href="#faq" data-lang="en">FAQ</a>
+    <a href="#changelog" data-lang="es">Novedades</a>
+    <a href="#changelog" data-lang="en">Changelog</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle theme" onclick="toggleTheme()">🌙</button>
+    <button class="menu-btn" id="menu-btn" aria-label="Menu" onclick="toggleMobileMenu()">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#features" data-lang="es" onclick="toggleMobileMenu()">Funciones</a>
+  <a href="#features" data-lang="en" onclick="toggleMobileMenu()">Features</a>
+  <a href="#primeros-pasos" data-lang="es" onclick="toggleMobileMenu()">Primeros pasos</a>
+  <a href="#primeros-pasos" data-lang="en" onclick="toggleMobileMenu()">Getting started</a>
+  <a href="#requisitos" data-lang="es" onclick="toggleMobileMenu()">Requisitos</a>
+  <a href="#requisitos" data-lang="en" onclick="toggleMobileMenu()">Requirements</a>
+  <a href="#faq" data-lang="es" onclick="toggleMobileMenu()">Preguntas frecuentes</a>
+  <a href="#faq" data-lang="en" onclick="toggleMobileMenu()">FAQ</a>
+  <a href="#changelog" data-lang="es" onclick="toggleMobileMenu()">Novedades</a>
+  <a href="#changelog" data-lang="en" onclick="toggleMobileMenu()">Changelog</a>
+  <a href="#descargar" data-lang="es" onclick="toggleMobileMenu()">Descargar</a>
+  <a href="#descargar" data-lang="en" onclick="toggleMobileMenu()">Download</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span data-lang="es">Asistente de IA personal para Windows</span>
+    <span data-lang="en">Personal AI assistant for Windows</span>
+  </div>
+
+  <h1>
+    <span class="k">K</span>.<span class="i">I</span>.N.O<br>
+    <span data-lang="es">Tu IA personal,<br>en tu PC</span>
+    <span data-lang="en">Your personal AI,<br>on your PC</span>
+  </h1>
+
+  <p class="hero-sub" data-lang="es">
+    Control por voz, base de datos amplia y totalmente liviano.
+    Sin servidores propios. Tus claves, tu privacidad.
+  </p>
+  <p class="hero-sub" data-lang="en" style="display:none">
+    Voice control, broad knowledge base and completely lightweight.
+    No proprietary servers. Your keys, your privacy.
+  </p>
+
+  <div class="hero-buttons">
+    <a href="https://forms.gle/Ks6Mzd7GuZ7F4mPh8" target="_blank">
+      <button class="btn-primary">
+        ↓ <span data-lang="es">Descargar gratis</span><span data-lang="en">Download free</span>
+      </button>
+    </a>
+    <a href="#features">
+      <button class="btn-secondary">
+        <span data-lang="es">Ver funciones</span><span data-lang="en">See features</span>
+      </button>
+    </a>
+  </div>
+
+  <p class="hero-note" data-lang="es">Gratis · Solo para Windows · Requiere API key propia · Versión actual: v3.2</p>
+  <p class="hero-note" data-lang="en" style="display:none">Free · Windows only · Requires your own API key · Current version: v3.2</p>
+
+  <!-- APP PREVIEW -->
+  <div class="preview" style="margin-top: 3rem;">
+    <div class="preview-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <div class="preview-title">K.I.N.O — Personal AI</div>
+    </div>
+    <img src="./kino-preview.png" alt="KINO AI — interfaz de la aplicación" style="display:block; width:100%; height:auto;">
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <p class="section-label">Features</p>
+  <h2 class="section-title" data-lang="es">Todo lo que KINO puede hacer</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">Everything KINO can do</h2>
+  <p class="section-sub" data-lang="es">Diseñado para ser tu copiloto diario en Windows, sin complicaciones.</p>
+  <p class="section-sub" data-lang="en" style="display:none">Designed to be your daily copilot on Windows, without the hassle.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎙</div>
+      <div class="feature-title" data-lang="es">Control por voz</div>
+      <div class="feature-title" data-lang="en" style="display:none">Voice control</div>
+      <div class="feature-desc" data-lang="es">Hablale a KINO como si fuera una persona. Reconocimiento de voz en tiempo real, sin comandos rígidos.</div>
+      <div class="feature-desc" data-lang="en" style="display:none">Talk to KINO like a person. Real-time voice recognition, no rigid commands.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title" data-lang="es">Base de conocimiento amplia</div>
+      <div class="feature-title" data-lang="en" style="display:none">Broad knowledge base</div>
+      <div class="feature-desc" data-lang="es">Potenciado por Gemini y OpenRouter. Accedé a los mejores modelos de IA directamente desde tu escritorio.</div>
+      <div class="feature-desc" data-lang="en" style="display:none">Powered by Gemini and OpenRouter. Access the best AI models directly from your desktop.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title" data-lang="es">Liviano y rápido</div>
+      <div class="feature-title" data-lang="en" style="display:none">Lightweight and fast</div>
+      <div class="feature-desc" data-lang="es">Menos de 200 MB de RAM en uso. No consume recursos en segundo plano. Tu PC sigue siendo tuya.</div>
+      <div class="feature-desc" data-lang="en" style="display:none">Under 200 MB RAM in use. No background resource drain. Your PC stays yours.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title" data-lang="es">Privacidad total</div>
+      <div class="feature-title" data-lang="en" style="display:none">Full privacy</div>
+      <div class="feature-desc" data-lang="es">Tus conversaciones no pasan por servidores de KINO. Todo va directo entre tu PC y el proveedor de IA que elegís.</div>
+      <div class="feature-desc" data-lang="en" style="display:none">Your conversations don't go through KINO servers. Everything goes directly between your PC and your chosen AI provider.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🖥</div>
+      <div class="feature-title" data-lang="es">Automatización de pantalla</div>
+      <div class="feature-title" data-lang="en" style="display:none">Screen automation</div>
+      <div class="feature-desc" data-lang="es">KINO puede ver tu pantalla y ayudarte con lo que estás haciendo en ese momento.</div>
+      <div class="feature-desc" data-lang="en" style="display:none">KINO can see your screen and help you with whatever you're working on.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📁</div>
+      <div class="feature-title" data-lang="es">Gestión de archivos</div>
+      <div class="feature-title" data-lang="en" style="display:none">File management</div>
+      <div class="feature-desc" data-lang="es">Subí archivos directamente a la conversación. KINO los analiza, resume o procesa según lo que necesites.</div>
+      <div class="feature-desc" data-lang="en" style="display:none">Upload files directly to the conversation. KINO analyzes, summarizes or processes them as needed.</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section" id="comparacion" style="padding-top: 0;">
+  <p class="section-label" data-lang="es">Comparativa</p>
+  <p class="section-label" data-lang="en" style="display:none">Comparison</p>
+  <h2 class="section-title" data-lang="es">¿En qué se diferencia de otros asistentes?</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">How is it different from other assistants?</h2>
+  <p class="section-sub" data-lang="es">KINO no es Alexa, Siri ni Cortana. Así se compara.</p>
+  <p class="section-sub" data-lang="en" style="display:none">KINO isn't Alexa, Siri or Cortana. Here's how it compares.</p>
+
+  <div class="cmp-wrap">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th data-lang="es"> </th>
+          <th data-lang="en" style="display:none"> </th>
+          <th class="cmp-kino">KINO AI</th>
+          <th data-lang="es">Alexa / Siri / Cortana</th>
+          <th data-lang="en" style="display:none">Alexa / Siri / Cortana</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-lang="es">Tus conversaciones</td>
+          <td data-lang="en" style="display:none">Your conversations</td>
+          <td class="cmp-yes" data-lang="es">No se guardan en servidores propios</td>
+          <td class="cmp-yes" data-lang="en" style="display:none">Not stored on our servers</td>
+          <td data-lang="es">Pueden almacenarse para entrenamiento</td>
+          <td data-lang="en" style="display:none">May be stored for training</td>
+        </tr>
+        <tr>
+          <td data-lang="es">Motor de IA</td>
+          <td data-lang="en" style="display:none">AI engine</td>
+          <td class="cmp-yes" data-lang="es">Elegís el modelo (Gemini, etc.)</td>
+          <td class="cmp-yes" data-lang="en" style="display:none">You choose the model (Gemini, etc.)</td>
+          <td data-lang="es">Fijo, definido por el fabricante</td>
+          <td data-lang="en" style="display:none">Fixed, set by the manufacturer</td>
+        </tr>
+        <tr>
+          <td data-lang="es">Personalización</td>
+          <td data-lang="en" style="display:none">Customization</td>
+          <td class="cmp-yes" data-lang="es">Código abierto y editable</td>
+          <td class="cmp-yes" data-lang="en" style="display:none">Open and editable code</td>
+          <td class="cmp-no" data-lang="es">Cerrado</td>
+          <td class="cmp-no" data-lang="en" style="display:none">Closed</td>
+        </tr>
+        <tr>
+          <td data-lang="es">Hardware adicional</td>
+          <td data-lang="en" style="display:none">Extra hardware</td>
+          <td class="cmp-yes" data-lang="es">No, usa tu PC</td>
+          <td class="cmp-yes" data-lang="en" style="display:none">No, uses your PC</td>
+          <td data-lang="es">A veces requiere dispositivo</td>
+          <td data-lang="en" style="display:none">Sometimes requires a device</td>
+        </tr>
+        <tr>
+          <td data-lang="es">Consumo de recursos</td>
+          <td data-lang="en" style="display:none">Resource usage</td>
+          <td class="cmp-yes" data-lang="es">Menos de 200 MB de RAM</td>
+          <td class="cmp-yes" data-lang="en" style="display:none">Under 200 MB RAM</td>
+          <td data-lang="es">Dispositivo dedicado funcionando 24/7</td>
+          <td data-lang="en" style="display:none">Dedicated device running 24/7</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- REQUIREMENTS -->
+<section class="section" id="requisitos" style="padding-top: 0;">
+  <p class="section-label" data-lang="es">Requisitos</p>
+  <p class="section-label" data-lang="en" style="display:none">Requirements</p>
+  <h2 class="section-title" data-lang="es">¿Qué necesitás para usarlo?</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">What do you need to use it?</h2>
+  <p class="section-sub" data-lang="es">KINO corre en casi cualquier PC con Windows moderno.</p>
+  <p class="section-sub" data-lang="en" style="display:none">KINO runs on almost any modern Windows PC.</p>
+
+  <div class="req-grid">
+    <div class="req-item">
+      <div class="req-dot"></div>
+      <div>
+        <div class="req-label">OS</div>
+        <div class="req-val">Windows 10 / 11</div>
+      </div>
+    </div>
+    <div class="req-item">
+      <div class="req-dot"></div>
+      <div>
+        <div class="req-label">RAM</div>
+        <div class="req-val">4 GB mínimo</div>
+      </div>
+    </div>
+    <div class="req-item">
+      <div class="req-dot"></div>
+      <div>
+        <div class="req-label">Disco</div>
+        <div class="req-val">~300 MB</div>
+      </div>
+    </div>
+    <div class="req-item">
+      <div class="req-dot"></div>
+      <div>
+        <div class="req-label">API Key</div>
+        <div class="req-val">
+          <span data-lang="es">Gemini o OpenRouter</span>
+          <span data-lang="en">Gemini or OpenRouter</span>
+        </div>
+      </div>
+    </div>
+    <div class="req-item">
+      <div class="req-dot"></div>
+      <div>
+        <div class="req-label">Internet</div>
+        <div class="req-val">
+          <span data-lang="es">Requerido</span>
+          <span data-lang="en">Required</span>
+        </div>
+      </div>
+    </div>
+    <div class="req-item">
+      <div class="req-dot"></div>
+      <div>
+        <div class="req-label">Edad</div>
+        <div class="req-val">18+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIMEROS PASOS -->
+<section class="section" id="primeros-pasos">
+  <p class="section-label" data-lang="es">Guía rápida</p>
+  <p class="section-label" data-lang="en" style="display:none">Quick guide</p>
+  <h2 class="section-title" data-lang="es">Primeros pasos</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">Getting started</h2>
+  <p class="section-sub" data-lang="es">En pocos minutos vas a tener a KINO funcionando en tu PC. Por ahora el instalador de un clic es solo para Windows.</p>
+  <p class="section-sub" data-lang="en" style="display:none">In a few minutes you'll have KINO running on your PC. The one-click installer is currently Windows only.</p>
+
+  <div class="steps-grid">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title" data-lang="es">Descargá el instalador</div>
+        <div class="step-title" data-lang="en" style="display:none">Download the installer</div>
+        <div class="step-desc" data-lang="es">Hacé clic en "Descargar KINO AI gratis" más abajo y completá el formulario para recibir el link.</div>
+        <div class="step-desc" data-lang="en" style="display:none">Click "Download KINO AI free" below and fill out the form to receive the link.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title" data-lang="es">Ejecutá KINO_Setup.exe</div>
+        <div class="step-title" data-lang="en" style="display:none">Run KINO_Setup.exe</div>
+        <div class="step-desc" data-lang="es">Si Windows muestra una advertencia de SmartScreen, hacé clic en "Más información" y luego en "Ejecutar de todas formas". Es normal en instaladores sin firma paga.</div>
+        <div class="step-desc" data-lang="en" style="display:none">If Windows shows a SmartScreen warning, click "More info" and then "Run anyway". This is normal for installers without a paid signature.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title" data-lang="es">Conseguí tu Gemini API key</div>
+        <div class="step-title" data-lang="en" style="display:none">Get your Gemini API key</div>
+        <div class="step-desc" data-lang="es">Entrá a <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">ai.google.dev</a> con tu cuenta de Google y generá una key gratis. KINO la usa para entender y responder.</div>
+        <div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">ai.google.dev</a> with your Google account and generate a free key. KINO uses it to understand and respond.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title" data-lang="es">Conseguí tu OpenRouter API key</div>
+        <div class="step-title" data-lang="en" style="display:none">Get your OpenRouter API key</div>
+        <div class="step-desc" data-lang="es">Entrá a <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, creá una cuenta gratis y generá tu key. Se usa como respaldo y para tareas adicionales.</div>
+        <div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, create a free account and generate your key. It's used as a backup and for extra tasks.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title" data-lang="es">Pegá tus keys y listo</div>
+        <div class="step-title" data-lang="en" style="display:none">Paste your keys and you're set</div>
+        <div class="step-desc" data-lang="es">Al abrir KINO por primera vez, pegá ambas keys, elegí tu sistema operativo y hacé clic en "Initialise Systems". ¡Ya podés empezar a hablarle!</div>
+        <div class="step-desc" data-lang="en" style="display:none">When you open KINO for the first time, paste both keys, pick your operating system and click "Initialise Systems". You're ready to start talking to it!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <p class="section-label" data-lang="es">Ayuda</p>
+  <p class="section-label" data-lang="en" style="display:none">Help</p>
+  <h2 class="section-title" data-lang="es">Preguntas frecuentes</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">Frequently asked questions</h2>
+  <p class="section-sub" data-lang="es">Lo que más nos preguntan sobre KINO.</p>
+  <p class="section-sub" data-lang="en" style="display:none">What people ask us most about KINO.</p>
+
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary data-lang="es">Windows me muestra una advertencia al instalar, ¿es seguro?</summary>
+      <summary data-lang="en" style="display:none">Windows shows a warning when installing, is it safe?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Sí. Esa advertencia (SmartScreen) aparece porque KINO es una app nueva sin firma digital paga, no porque tenga algo malicioso. Hacé clic en "Más información" y luego en "Ejecutar de todas formas" para continuar con la instalación.</span>
+        <span data-lang="en" style="display:none">Yes. That warning (SmartScreen) appears because KINO is a new app without a paid digital signature, not because it's malicious. Click "More info" and then "Run anyway" to continue with the installation.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿KINO es realmente gratis?</summary>
+      <summary data-lang="en" style="display:none">Is KINO really free?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Sí, KINO en sí es 100% gratis, sin suscripciones ni tarjetas de crédito. Necesitás tus propias API keys de Gemini y OpenRouter, ambas con planes gratuitos generosos que cubren un uso normal.</span>
+        <span data-lang="en" style="display:none">Yes, KINO itself is 100% free, with no subscriptions or credit cards. You'll need your own Gemini and OpenRouter API keys, both with generous free tiers that cover normal usage.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿Mis conversaciones o datos se guardan en algún servidor?</summary>
+      <summary data-lang="en" style="display:none">Are my conversations or data stored on any server?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">No. KINO Systems no tiene servidores propios ni almacena tus conversaciones. Todo queda guardado localmente en tu computadora. Las únicas conexiones externas son las que hace KINO directamente con Gemini y OpenRouter usando tus propias keys.</span>
+        <span data-lang="en" style="display:none">No. KINO Systems doesn't have its own servers and doesn't store your conversations. Everything stays saved locally on your computer. The only external connections are the ones KINO makes directly with Gemini and OpenRouter using your own keys.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿Funciona en Mac o Linux?</summary>
+      <summary data-lang="en" style="display:none">Does it work on Mac or Linux?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">El instalador de un clic (.exe) es por ahora solo para Windows. KINO está hecho en Python y es multiplataforma, así que en Mac o Linux se puede correr desde el código fuente, aunque requiere algo más de conocimiento técnico (instalar Python y dependencias).</span>
+        <span data-lang="en" style="display:none">The one-click installer (.exe) is currently Windows only. KINO is built in Python and is cross-platform, so on Mac or Linux it can be run from source code, though it requires a bit more technical knowledge (installing Python and dependencies).</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">Encontré un error o algo no funciona, ¿qué hago?</summary>
+      <summary data-lang="en" style="display:none">I found a bug or something isn't working, what do I do?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Dentro de la app, abajo a la derecha, hay un botón "Reportar problema" que abre un correo prellenado con los datos necesarios para ayudarte más rápido. También podés escribirnos directamente a <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a>.</span>
+        <span data-lang="en" style="display:none">Inside the app, in the bottom right, there's a "Report issue" button that opens a pre-filled email with the info needed to help you faster. You can also write to us directly at <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a>.</span>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-lang="es">¿Cómo cambio mis API keys?</summary>
+      <summary data-lang="en" style="display:none">How do I change my API keys?</summary>
+      <div class="faq-answer">
+        <span data-lang="es">Dentro de la app, abajo, hay un link "Cerrar sesión" que borra tus keys guardadas y te lleva de nuevo a la pantalla de configuración. Después de ingresar las nuevas keys, reiniciá KINO para que tomen efecto.</span>
+        <span data-lang="en" style="display:none">Inside the app, at the bottom, there's a "Cerrar sesión" link that clears your saved keys and takes you back to the setup screen. After entering the new keys, restart KINO for them to take effect.</span>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- CHANGELOG -->
+<section class="section" id="changelog">
+  <p class="section-label" data-lang="es">Historial</p>
+  <p class="section-label" data-lang="en" style="display:none">History</p>
+  <h2 class="section-title" data-lang="es">Novedades</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">What's new</h2>
+  <p class="section-sub" data-lang="es">Los últimos cambios y mejoras de KINO AI.</p>
+  <p class="section-sub" data-lang="en" style="display:none">The latest changes and improvements to KINO AI.</p>
+
+  <div class="changelog-list">
+    <div class="changelog-item">
+      <div class="changelog-head">
+        <span class="changelog-version">v3.2</span>
+        <span class="changelog-date" data-lang="es">Junio 2026</span>
+        <span class="changelog-date" data-lang="en" style="display:none">June 2026</span>
+      </div>
+      <ul data-lang="es">
+        <li>Nuevo diseño más sobrio, con controles más compactos.</li>
+        <li>Validación automática de tu Gemini API key al configurar KINO.</li>
+        <li>Botón "Reportar problema" que incluye el registro de actividad para ayudarte más rápido.</li>
+        <li>Link directo a "Cómo usar KINO" desde la app.</li>
+        <li>Nueva opción "Cerrar sesión" para cambiar tus API keys sin reinstalar.</li>
+        <li>Corrección de un error que podía dejar a KINO trabado "pensando" al hablarle.</li>
+        <li>Corrección de un error de audio que afectaba a algunas configuraciones de sonido.</li>
+      </ul>
+      <ul data-lang="en" style="display:none">
+        <li>New, more understated design with more compact controls.</li>
+        <li>Automatic validation of your Gemini API key during setup.</li>
+        <li>"Report issue" button that includes the activity log to help you faster.</li>
+        <li>Direct link to "How to use KINO" from the app.</li>
+        <li>New "Log out" option to change your API keys without reinstalling.</li>
+        <li>Fixed an issue that could leave KINO stuck "thinking" when spoken to.</li>
+        <li>Fixed an audio error affecting some sound configurations.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- NOTIFICACIONES -->
+<section class="section" id="notificaciones">
+  <p class="section-label" data-lang="es">Mantenete al día</p>
+  <p class="section-label" data-lang="en" style="display:none">Stay in the loop</p>
+  <h2 class="section-title" data-lang="es">Recibí novedades de KINO</h2>
+  <h2 class="section-title" data-lang="en" style="display:none">Get KINO updates</h2>
+  <p class="section-sub" data-lang="es">Registrate con tu email para enterarte cuando salgan nuevas versiones o mejoras importantes.</p>
+  <p class="section-sub" data-lang="en" style="display:none">Sign up with your email to find out when new versions or important improvements come out.</p>
+
+  <div class="auth-box" id="auth-box">
+    <!-- Se completa dinámicamente por script -->
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="descargar">
+  <h2 data-lang="es">Listo para empezar?</h2>
+  <h2 data-lang="en" style="display:none">Ready to get started?</h2>
+  <p data-lang="es">Registrate y recibís el link de descarga gratis en tu email.</p>
+  <p data-lang="en" style="display:none">Register and receive the free download link in your email.</p>
+  <a href="https://forms.gle/Ks6Mzd7GuZ7F4mPh8" target="_blank">
+    <button class="btn-primary" style="font-size: 1.05rem; padding: 1rem 2.5rem;">
+      ↓ <span data-lang="es">Descargar KINO AI gratis</span><span data-lang="en">Download KINO AI free</span>
+    </button>
+  </a>
+  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted);" data-lang="es">
+    100% gratis · Sin suscripción · Sin tarjeta de crédito
+  </p>
+  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted);" data-lang="en">
+    100% free · No subscription · No credit card
+  </p>
+
+  <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+    <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600;" data-lang="es">¿KINO te resultó útil?</p>
+    <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600;" data-lang="en">Found KINO useful?</p>
+    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;" data-lang="es">Es gratis y va a seguir siéndolo. Si querés ayudar a que sigamos mejorándolo, podés invitarnos un café.</p>
+    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;" data-lang="en">It's free and will stay that way. If you'd like to help us keep improving it, you can buy us a coffee.</p>
+    <a href="https://ko-fi.com/kinoaisystems" target="_blank">
+      <button class="btn-secondary">
+        ☕ <span data-lang="es">Apoyar el proyecto</span><span data-lang="en">Support the project</span>
+      </button>
+    </a>
+  </div>
+
+  <div style="margin-top: 2rem;">
+    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem;" data-lang="es">¿Te gustó KINO? Compartilo:</p>
+    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem;" data-lang="en">Like KINO? Share it:</p>
+    <div class="hero-buttons" style="margin-bottom: 0;">
+      <a href="https://wa.me/?text=Encontr%C3%A9%20KINO%20AI%2C%20un%20asistente%20de%20voz%20gratis%20para%20Windows%20que%20corre%20en%20tu%20PC%3A%20https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="es">
+        <button class="btn-secondary">WhatsApp</button>
+      </a>
+      <a href="https://wa.me/?text=Found%20KINO%20AI%2C%20a%20free%20voice%20assistant%20for%20Windows%20that%20runs%20on%20your%20PC%3A%20https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="en" style="display:none">
+        <button class="btn-secondary">WhatsApp</button>
+      </a>
+      <a href="https://twitter.com/intent/tweet?text=Encontr%C3%A9%20KINO%20AI%2C%20un%20asistente%20de%20voz%20gratis%20para%20Windows%20que%20corre%20en%20tu%20PC%3A&url=https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="es">
+        <button class="btn-secondary">X / Twitter</button>
+      </a>
+      <a href="https://twitter.com/intent/tweet?text=Found%20KINO%20AI%2C%20a%20free%20voice%20assistant%20for%20Windows%20that%20runs%20on%20your%20PC%3A&url=https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="en" style="display:none">
+        <button class="btn-secondary">X / Twitter</button>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 KINO Systems · <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a></p>
+  <p style="margin-top: 0.5rem;">
+    <a href="mailto:kinoaisystems@gmail.com?subject=KINO%20AI%20-%20Reporte%20de%20problema&body=Describe%20el%20problema%20aqui%3A%0A%0A%0A--- Info adicional (no borrar) ---%0APagina%3A%20kinoaisystems.github.io%2Fkino-ai" data-lang="es">⚠ Reportar un problema</a>
+    <a href="mailto:kinoaisystems@gmail.com?subject=KINO%20AI%20-%20Issue%20report&body=Describe%20the%20issue%20here%3A%0A%0A%0A--- Additional info (do not delete) ---%0APage%3A%20kinoaisystems.github.io%2Fkino-ai" data-lang="en">⚠ Report an issue</a>
+    · <a href="https://ko-fi.com/kinoaisystems" target="_blank" data-lang="es">☕ Apoyar el proyecto</a>
+    <a href="https://ko-fi.com/kinoaisystems" target="_blank" data-lang="en">☕ Support the project</a>
+  </p>
+  <p style="margin-top: 0.5rem;">
+    <span data-lang="es">No afiliado a Google, OpenRouter ni ningún otro proveedor de IA.</span>
+    <span data-lang="en">Not affiliated with Google, OpenRouter or any other AI provider.</span>
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+function setLang(lang) {
+  document.body.classList.toggle('en', lang === 'en');
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === lang.toUpperCase());
+  });
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    if (el.tagName === 'SPAN') return;
+    el.style.display = el.dataset.lang === lang ? '' : 'none';
+  });
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// ---- SUPABASE AUTH ----
+const SUPABASE_URL = 'https://vqlpsaacopcnzeukyhtn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbHBzYWFjb3BjbnpldWt5aHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MTk4MjcsImV4cCI6MjA5Njk5NTgyN30.1CLZdqD2NZZIf0cSRrTyEWVcZhrbR2GbhsYi7nkl1HE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const authBox = document.getElementById('auth-box');
+
+const L = {
+  es: {
+    loginTitle: 'Iniciar sesión',
+    registerTitle: 'Crear cuenta',
+    email: 'Email',
+    password: 'Contraseña',
+    loginBtn: 'Iniciar sesión',
+    registerBtn: 'Registrarme',
+    noAccount: '¿No tenés cuenta?',
+    haveAccount: '¿Ya tenés cuenta?',
+    registerLink: 'Registrate',
+    loginLink: 'Iniciar sesión',
+    loggedAs: 'Registrado como',
+    logout: 'Cerrar sesión',
+    loginOk: 'Sesión iniciada.',
+    registerOk: 'Cuenta creada. Revisá tu email para confirmarla.',
+    err: 'Error: ',
+  },
+  en: {
+    loginTitle: 'Log in',
+    registerTitle: 'Create account',
+    email: 'Email',
+    password: 'Password',
+    loginBtn: 'Log in',
+    registerBtn: 'Sign up',
+    noAccount: "Don't have an account?",
+    haveAccount: 'Already have an account?',
+    registerLink: 'Sign up',
+    loginLink: 'Log in',
+    loggedAs: 'Registered as',
+    logout: 'Log out',
+    loginOk: 'Logged in.',
+    registerOk: 'Account created. Check your email to confirm it.',
+    err: 'Error: ',
+  }
+};
+
+function curLang() {
+  return document.body.classList.contains('en') ? 'en' : 'es';
+}
+
+let authMode = 'login'; // 'login' | 'register'
+
+async function renderAuth() {
+  const { data: { session } } = await sb.auth.getSession();
+  const t = L[curLang()];
+
+  if (session && session.user) {
+    authBox.innerHTML = `
+      <div class="auth-logged">
+        <p>${t.loggedAs} <strong>${session.user.email}</strong></p>
+        <p style="margin-top: 1rem;">
+          <a class="auth-switch" id="logout-link" style="cursor:pointer; text-decoration:underline;">${t.logout}</a>
+        </p>
+      </div>
+    `;
+    document.getElementById('logout-link').onclick = async () => {
+      await sb.auth.signOut();
+      renderAuth();
+    };
+    return;
+  }
+
+  const isLogin = authMode === 'login';
+  authBox.innerHTML = `
+    <h3 style="margin-bottom: 1rem; font-size: 1.05rem;">${isLogin ? t.loginTitle : t.registerTitle}</h3>
+    <input type="email" id="auth-email" placeholder="${t.email}" autocomplete="email" />
+    <input type="password" id="auth-password" placeholder="${t.password}" autocomplete="${isLogin ? 'current-password' : 'new-password'}" />
+    <button class="btn-primary" id="auth-submit">${isLogin ? t.loginBtn : t.registerBtn}</button>
+    <div class="auth-msg" id="auth-msg"></div>
+    <div class="auth-switch">
+      ${isLogin ? t.noAccount : t.haveAccount}
+      <a id="auth-toggle">${isLogin ? t.registerLink : t.loginLink}</a>
+    </div>
+  `;
+
+  document.getElementById('auth-toggle').onclick = () => {
+    authMode = isLogin ? 'register' : 'login';
+    renderAuth();
+  };
+
+  document.getElementById('auth-submit').onclick = async () => {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const msgEl = document.getElementById('auth-msg');
+    msgEl.textContent = '';
+    msgEl.className = 'auth-msg';
+
+    if (!email || !password) return;
+
+    if (isLogin) {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        msgEl.textContent = t.err + error.message;
+        msgEl.classList.add('err');
+      } else {
+        msgEl.textContent = t.loginOk;
+        msgEl.classList.add('ok');
+        setTimeout(renderAuth, 600);
+      }
+    } else {
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) {
+        msgEl.textContent = t.err + error.message;
+        msgEl.classList.add('err');
+      } else {
+        // Insertar en subscribers si ya hay sesion (confirmacion de email desactivada)
+        // o quedara pendiente de confirmar segun config del proyecto
+        if (data.user) {
+          await sb.from('subscribers').insert({ id: data.user.id, email: data.user.email });
+        }
+        msgEl.textContent = t.registerOk;
+        msgEl.classList.add('ok');
+        authMode = 'login';
+        setTimeout(renderAuth, 1500);
+      }
+    }
+  };
+}
+
+renderAuth();
+</script>
+
+</body>
+</html>
