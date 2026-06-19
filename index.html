@@ -1172,6 +1172,29 @@
   </p>
 </footer>
 
+<!-- DOWNLOAD MODAL -->
+<div class="dl-overlay" id="dl-overlay">
+  <div class="dl-box">
+    <button class="dl-close" onclick="closeDownloadModal()">×</button>
+    <h3 data-lang="es">Descargar KINO AI</h3>
+    <h3 data-lang="en" style="display:none">Download KINO AI</h3>
+    <p class="dl-sub" data-lang="es">Completá tus datos y la descarga arranca al toque.</p>
+    <p class="dl-sub" data-lang="en" style="display:none">Fill in your details and the download starts right away.</p>
+    <input type="text" id="dl-nombre" placeholder="Nombre / Name" autocomplete="name" />
+    <input type="email" id="dl-email" placeholder="Email" autocomplete="email" />
+    <button class="btn-primary" id="dl-submit" onclick="submitDownload()">
+      <span data-lang="es">Descargar ahora</span><span data-lang="en">Download now</span>
+    </button>
+    <div class="dl-msg" id="dl-msg"></div>
+    <p class="dl-fallback" data-lang="es">
+      ¿No arrancó? <a href="https://github.com/kinoaisystems/kino-ai/releases/download/v3.3/KINO_Setup.exe">Descargá directo acá</a>
+    </p>
+    <p class="dl-fallback" data-lang="en" style="display:none">
+      Didn't start? <a href="https://github.com/kinoaisystems/kino-ai/releases/download/v3.3/KINO_Setup.exe">Download directly here</a>
+    </p>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ---- EFECTO ROLLO ----
@@ -1412,34 +1435,5 @@ function submitDownload() {
 }
 </script>
 
-<!-- DOWNLOAD MODAL -->
-<div class="dl-overlay" id="dl-overlay">
-  <div class="dl-box">
-    <button class="dl-close" onclick="closeDownloadModal()">×</button>
-    <h3 data-lang="es">Descargar KINO AI</h3>
-    <h3 data-lang="en" style="display:none">Download KINO AI</h3>
-    <p class="dl-sub" data-lang="es">Completá tus datos y la descarga arranca al toque.</p>
-    <p class="dl-sub" data-lang="en" style="display:none">Fill in your details and the download starts right away.</p>
-
-    <input type="text" id="dl-nombre" placeholder="Nombre / Name" autocomplete="name" />
-    <input type="email" id="dl-email" placeholder="Email" autocomplete="email" />
-
-    <button class="btn-primary" id="dl-submit" onclick="submitDownload()">
-      <span data-lang="es">Descargar ahora</span><span data-lang="en">Download now</span>
-    </button>
-
-    <div class="dl-msg" id="dl-msg"></div>
-
-    <p class="dl-fallback" data-lang="es">
-      ¿No arrancó? <a href="https://github.com/kinoaisystems/kino-ai/releases/download/v3.3/KINO_Setup.exe">Descargá directo acá</a>
-    </p>
-    <p class="dl-fallback" data-lang="en" style="display:none">
-      Didn't start? <a href="https://github.com/kinoaisystems/kino-ai/releases/download/v3.3/KINO_Setup.exe">Download directly here</a>
-    </p>
-  </div>
-</div>
-
 </body>
 </html>
-
-       
