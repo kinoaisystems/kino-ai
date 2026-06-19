@@ -1370,12 +1370,11 @@ function triggerFileDownload(url) {
   a.remove();
 }
 
-async function submitDownload() {
+function submitDownload() {
   const t = DL[curLang()];
   const nombre = document.getElementById('dl-nombre').value.trim();
   const email = document.getElementById('dl-email').value.trim();
   const msgEl = document.getElementById('dl-msg');
-  const btn = document.getElementById('dl-submit');
 
   msgEl.textContent = '';
   msgEl.className = 'dl-msg';
@@ -1386,29 +1385,30 @@ async function submitDownload() {
     return;
   }
 
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  if (!emailOk) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     msgEl.textContent = t.needEmail;
     msgEl.classList.add('err');
     return;
   }
 
-  btn.disabled = true;
+  // Descarga inmediata y sincrónica — el navegador no puede bloquear esto
+  window.location.href = DOWNLOAD_URL;
 
-  try {
-    await sb.from('downloads').insert({ nombre, email });
-  } catch (err) {
-    // Si falla el registro igual dejamos descargar, no queremos bloquear al usuario
-    console.error('Error guardando en Supabase:', err);
-  }
+  // Registro en Supabase en background (sin SDK, sin await)
+  fetch('https://vqlpsaacopcnzeukyhtn.supabase.co/rest/v1/downloads', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ nombre: nombre, email: email })
+  }).catch(function() {});
 
   msgEl.textContent = t.starting;
   msgEl.classList.add('ok');
-
-  window.open(DOWNLOAD_URL, "_blank");
-
-  btn.disabled = false;
-  setTimeout(closeDownloadModal, 1200);
+  setTimeout(closeDownloadModal, 1500);
 }
 </script>
 
@@ -1441,3 +1441,5 @@ async function submitDownload() {
 
 </body>
 </html>
+
+       
