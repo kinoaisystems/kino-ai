@@ -1405,7 +1405,7 @@ async function submitDownload() {
   msgEl.textContent = t.starting;
   msgEl.classList.add('ok');
 
-  triggerFileDownload(DOWNLOAD_URL);
+  window.open(DOWNLOAD_URL, "_blank");
 
   btn.disabled = false;
   setTimeout(closeDownloadModal, 1200);
