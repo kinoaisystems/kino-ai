@@ -123,9 +123,10 @@
 
   .hero-badge {
     display: inline-block;
-    background: var(--accent-glow);
-    border: 1px solid rgba(108,99,255,0.3);
-    color: #a89fff;
+    background: rgba(18,18,26,0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(108,99,255,0.35);
+    color: #b8b0ff;
     font-size: 0.8rem; letter-spacing: 0.1em;
     padding: 0.4rem 1rem; border-radius: 20px;
     margin-bottom: 2rem;
@@ -136,14 +137,20 @@
     font-weight: 800; letter-spacing: -0.02em;
     line-height: 1.1;
     margin-bottom: 1.5rem;
+    text-shadow: 0 2px 28px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.5);
   }
 
-  .hero h1 .k { color: var(--accent); }
-  .hero h1 .i { color: var(--accent2); }
+  .hero h1 .dot { color: var(--accent); }
 
   .hero-sub {
     font-size: 1.15rem; color: var(--muted);
     max-width: 520px; margin: 0 auto 2.5rem;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+    display: inline-block;
+    background: rgba(10,10,18,0.4);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 0.6rem 1.1rem;
   }
 
   .hero-buttons {
@@ -273,17 +280,25 @@
   .section-label {
     font-size: 0.8rem; letter-spacing: 0.12em; color: var(--accent);
     text-transform: uppercase; margin-bottom: 1rem;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.5);
   }
 
   .section-title {
     font-size: clamp(1.8rem, 3.5vw, 2.8rem);
     font-weight: 700; letter-spacing: -0.02em;
     margin-bottom: 1rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.55);
   }
 
   .section-sub {
     color: var(--muted); font-size: 1.05rem; max-width: 480px;
     margin-bottom: 3rem;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    display: inline-block;
+    background: rgba(10,10,18,0.4);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 0.5rem 0.9rem;
   }
 
   .features-grid {
@@ -474,7 +489,14 @@
     font-weight: 700; margin-bottom: 1rem;
   }
 
-  .cta-section p { color: var(--muted); margin-bottom: 2rem; font-size: 1.05rem; }
+  .cta-section p {
+    color: var(--muted); margin-bottom: 2rem; font-size: 1.05rem;
+    display: inline-block;
+    background: rgba(10,10,18,0.4);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 0.5rem 0.9rem;
+  }
 
   /* FOOTER */
   footer {
@@ -482,6 +504,8 @@
     padding: 2rem;
     text-align: center;
     font-size: 0.82rem; color: var(--muted);
+    background: rgba(10,10,18,0.4);
+    backdrop-filter: blur(6px);
   }
 
   footer a { color: var(--muted); }
@@ -521,9 +545,23 @@
     clip-path: inset(0% 0% round 0px);
   }
 
+  /* ---- ESCENA 3D DE FONDO ---- */
+  #scene-container {
+    position: fixed; inset: 0;
+    z-index: -1;
+    transition: opacity 0.6s ease;
+  }
+  body.light #scene-container { opacity: 0 !important; pointer-events: none; }
+  body.light .hero h1, body.light .hero-sub,
+  body.light .section-title, body.light .section-sub, body.light .section-label {
+    text-shadow: none;
+  }
+  body.light .hero-badge { background: var(--accent-glow); backdrop-filter: none; }
+
 </style>
 </head>
 <body>
+<div id="scene-container"></div>
 
 <nav>
   <div class="nav-logo">K<span>.</span>I<span>.</span>N<span>.</span>O</div>
@@ -572,7 +610,7 @@
   </div>
 
   <h1>
-    <span class="k">K</span>.<span class="i">I</span>.N.O<br>
+    K<span class="dot">.</span>I<span class="dot">.</span>N<span class="dot">.</span>O<br>
     <span data-lang="es">Tu IA personal,<br>en tu PC</span>
     <span data-lang="en">Your personal AI,<br>on your PC</span>
   </h1>
@@ -1052,18 +1090,18 @@
   <button class="btn-primary" onclick="openDownloadModal()" style="font-size: 1.05rem; padding: 1rem 2.5rem;">
     ↓ <span data-lang="es">Descargar KINO AI gratis</span><span data-lang="en">Download KINO AI free</span>
   </button>
-  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted);" data-lang="es">
+  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted); background: rgba(10,10,18,0.4); backdrop-filter: blur(6px); border-radius: 10px; padding: 0.4rem 0.7rem; display: inline-block;" data-lang="es">
     100% gratis · Sin suscripción · Sin tarjeta de crédito
   </p>
-  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted);" data-lang="en">
+  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted); background: rgba(10,10,18,0.4); backdrop-filter: blur(6px); border-radius: 10px; padding: 0.4rem 0.7rem; display: inline-block;" data-lang="en">
     100% free · No subscription · No credit card
   </p>
 
   <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border);">
     <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600;" data-lang="es">¿KINO te resultó útil?</p>
     <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600;" data-lang="en">Found KINO useful?</p>
-    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;" data-lang="es">Es gratis y va a seguir siéndolo. Si querés ayudar a que sigamos mejorándolo, podés invitarnos un café.</p>
-    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;" data-lang="en">It's free and will stay that way. If you'd like to help us keep improving it, you can buy us a coffee.</p>
+    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; background: rgba(10,10,18,0.4); backdrop-filter: blur(6px); border-radius: 10px; padding: 0.4rem 0.7rem; display: inline-block;" data-lang="es">Es gratis y va a seguir siéndolo. Si querés ayudar a que sigamos mejorándolo, podés invitarnos un café.</p>
+    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; background: rgba(10,10,18,0.4); backdrop-filter: blur(6px); border-radius: 10px; padding: 0.4rem 0.7rem; display: inline-block;" data-lang="en">It's free and will stay that way. If you'd like to help us keep improving it, you can buy us a coffee.</p>
     <a href="https://ko-fi.com/kinoaisystems" target="_blank">
       <button class="btn-secondary">
         ☕ <span data-lang="es">Apoyar el proyecto</span><span data-lang="en">Support the project</span>
@@ -1072,8 +1110,8 @@
   </div>
 
   <div style="margin-top: 2rem;">
-    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem;" data-lang="es">¿Te gustó KINO? Compartilo:</p>
-    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem;" data-lang="en">Like KINO? Share it:</p>
+    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem; background: rgba(10,10,18,0.4); backdrop-filter: blur(6px); border-radius: 10px; padding: 0.4rem 0.7rem; display: inline-block;" data-lang="es">¿Te gustó KINO? Compartilo:</p>
+    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem; background: rgba(10,10,18,0.4); backdrop-filter: blur(6px); border-radius: 10px; padding: 0.4rem 0.7rem; display: inline-block;" data-lang="en">Like KINO? Share it:</p>
     <div class="hero-buttons" style="margin-bottom: 0;">
       <a href="https://wa.me/?text=Encontr%C3%A9%20KINO%20AI%2C%20un%20asistente%20de%20voz%20gratis%20para%20Windows%20que%20corre%20en%20tu%20PC%3A%20https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="es">
         <button class="btn-secondary">WhatsApp</button>
@@ -1181,6 +1219,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ---- EFECTO ROLLO ----
 (function() {
@@ -1342,6 +1381,277 @@ async function submitDownload() {
 
   btn.disabled = false;
 }
+
+// ============================================================
+// ESCENA 3D DE FONDO (galaxia -> hélice -> núcleo)
+// ============================================================
+(function initBackgroundScene() {
+  if (typeof THREE === 'undefined') return; // si el CDN no cargo, no rompemos el resto del sitio
+
+  const container = document.getElementById('scene-container');
+  if (!container) return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 6, 16); // empieza lejos para el vuelo de entrada
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const PARTICLE_COUNT = 7000;
+  const colorCore = new THREE.Color('#ffffff');
+  const colorMid  = new THREE.Color('#4fc3f7');
+  const colorEdge = new THREE.Color('#6c63ff');
+
+  function makeGalaxy() {
+    const pos = new Float32Array(PARTICLE_COUNT * 3);
+    const col = new Float32Array(PARTICLE_COUNT * 3);
+    const ARMS = 4, SPIN = 1.6, RAND = 0.4;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const radius = Math.random() * 5;
+      const armAngle = ((i % ARMS) / ARMS) * Math.PI * 2;
+      const angle = armAngle + radius * SPIN;
+      const rx = (Math.random()-0.5) * RAND * radius;
+      const ry = (Math.random()-0.5) * RAND * 0.3;
+      const rz = (Math.random()-0.5) * RAND * radius;
+      const i3 = i*3;
+      pos[i3]   = Math.cos(angle) * radius + rx;
+      pos[i3+1] = ry;
+      pos[i3+2] = Math.sin(angle) * radius + rz;
+      const t = radius / 5;
+      const c = t < 0.3 ? colorCore.clone().lerp(colorMid, t/0.3) : colorMid.clone().lerp(colorEdge, (t-0.3)/0.7);
+      col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+    }
+    return { pos, col };
+  }
+
+  function makeHelix() {
+    const pos = new Float32Array(PARTICLE_COUNT * 3);
+    const col = new Float32Array(PARTICLE_COUNT * 3);
+    const HEIGHT = 9, RADIUS = 1.6, TURNS = 4;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const strand = i % 2;
+      const tt = i / PARTICLE_COUNT;
+      const y = (tt - 0.5) * HEIGHT;
+      const angle = tt * Math.PI * 2 * TURNS + strand * Math.PI;
+      const jitter = (Math.random() - 0.5) * 0.12;
+      const i3 = i*3;
+      pos[i3]   = Math.cos(angle) * (RADIUS + jitter);
+      pos[i3+1] = y + (Math.random()-0.5)*0.05;
+      pos[i3+2] = Math.sin(angle) * (RADIUS + jitter);
+      const c = strand === 0 ? colorMid.clone().lerp(colorCore, 0.3) : colorEdge.clone().lerp(colorCore, 0.2);
+      col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+    }
+    return { pos, col };
+  }
+
+  function makeCore() {
+    const pos = new Float32Array(PARTICLE_COUNT * 3);
+    const col = new Float32Array(PARTICLE_COUNT * 3);
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const idx = i + 0.5;
+      const phi = Math.acos(1 - 2*idx/PARTICLE_COUNT);
+      const theta = Math.PI * (1 + Math.sqrt(5)) * idx;
+      const r = 2.6 * Math.pow(Math.random(), 0.5);
+      const i3 = i*3;
+      pos[i3]   = r * Math.sin(phi) * Math.cos(theta);
+      pos[i3+1] = r * Math.cos(phi) * 0.6;
+      pos[i3+2] = r * Math.sin(phi) * Math.sin(theta);
+      const t = r / 2.6;
+      const c = colorCore.clone().lerp(colorMid, t).lerp(colorEdge, t*0.4);
+      col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+    }
+    return { pos, col };
+  }
+
+  const shapeGalaxy = makeGalaxy();
+  const shapeHelix  = makeHelix();
+  const shapeCore   = makeCore();
+
+  const positions = new Float32Array(PARTICLE_COUNT * 3);
+  const colorsAttr = new Float32Array(PARTICLE_COUNT * 3);
+  positions.set(shapeGalaxy.pos);
+  colorsAttr.set(shapeGalaxy.col);
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colorsAttr, 3));
+  const material = new THREE.PointsMaterial({
+    size: 0.045, sizeAttenuation: true, depthWrite: false,
+    blending: THREE.AdditiveBlending, vertexColors: true,
+    transparent: true, opacity: 0.88,
+  });
+  const particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.9 }));
+  scene.add(core);
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(0.9, 32, 32), new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent:true, opacity:0.15 }));
+  scene.add(glow);
+
+  const starCount = 1200;
+  const starPositions = new Float32Array(starCount*3);
+  for (let i=0;i<starCount;i++){
+    starPositions[i*3]=(Math.random()-0.5)*60;
+    starPositions[i*3+1]=(Math.random()-0.5)*60;
+    starPositions[i*3+2]=(Math.random()-0.5)*60;
+  }
+  const starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions,3));
+  const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color:0xffffff, size:0.025, transparent:true, opacity:0.55 }));
+  scene.add(stars);
+
+  // ---- Anclajes reales del sitio ----
+  const elFeatures    = document.getElementById('features');
+  const elComparacion = document.getElementById('comparacion');
+  const elRequisitos  = document.getElementById('requisitos');
+
+  let yFeatures = 0, yComparacion = 0, yRequisitos = 0;
+  function recalcAnchors() {
+    yFeatures    = elFeatures    ? elFeatures.getBoundingClientRect().top + window.scrollY : window.innerHeight;
+    yComparacion = elComparacion ? elComparacion.getBoundingClientRect().top + window.scrollY : yFeatures + window.innerHeight;
+    yRequisitos  = elRequisitos  ? elRequisitos.getBoundingClientRect().top + window.scrollY : yComparacion + window.innerHeight;
+  }
+  recalcAnchors();
+
+  const tmpPos = new Float32Array(PARTICLE_COUNT * 3);
+  const tmpCol = new Float32Array(PARTICLE_COUNT * 3);
+  const DIM_OPACITY = 0.16;
+  const DIM_DISTANCE = 700; // px tras "requisitos" hasta llegar a la opacidad minima
+  const SHAPES = [shapeGalaxy, shapeHelix, shapeCore];
+
+  // progress objetivo: 0 = galaxia, 1 = helice, 2 = nucleo (continuo, calculado del scroll real)
+  function getTargetProgress() {
+    const scrollY = window.scrollY;
+    if (scrollY < yFeatures) return 0;
+    if (scrollY < yComparacion) {
+      return (scrollY - yFeatures) / Math.max(1, (yComparacion - yFeatures));
+    }
+    if (scrollY < yRequisitos) {
+      return 1 + (scrollY - yComparacion) / Math.max(1, (yRequisitos - yComparacion));
+    }
+    return 2;
+  }
+
+  function getTargetDimOpacity() {
+    const scrollY = window.scrollY;
+    if (scrollY <= yRequisitos) return 1;
+    const distPast = scrollY - yRequisitos;
+    const dimT = Math.min(distPast / DIM_DISTANCE, 1);
+    return 1 - dimT * (1 - DIM_OPACITY);
+  }
+
+  // Valores "actuales" que persiguen al objetivo cada frame, con inercia (mas fluido que ligar 1:1 al scroll)
+  let currentProgress = 0;
+  let currentOpacity = 1;
+  const SMOOTH = 0.045; // mas chico = mas "viscoso"/fluido, mas grande = mas directo
+
+  function applyBlend() {
+    const targetProgress = getTargetProgress();
+    const targetOpacity  = getTargetDimOpacity();
+
+    const progressDelta = targetProgress - currentProgress;
+    const opacityDelta = targetOpacity - currentOpacity;
+    const settled = Math.abs(progressDelta) < 0.0005 && Math.abs(opacityDelta) < 0.0005;
+
+    if (settled) {
+      // Ya llegamos al objetivo: nada que recalcular este frame, ahorra CPU.
+      return;
+    }
+
+    currentProgress += progressDelta * SMOOTH;
+    currentOpacity   += opacityDelta * SMOOTH;
+    if (Math.abs(targetProgress - currentProgress) < 0.0005) currentProgress = targetProgress;
+    if (Math.abs(targetOpacity - currentOpacity) < 0.0005) currentOpacity = targetOpacity;
+
+    const from = Math.min(Math.floor(currentProgress), 1);
+    const to = from + 1;
+    const t = Math.min(Math.max(currentProgress - from, 0), 1);
+    const ease = t*t*(3-2*t);
+
+    const a = SHAPES[from], b = SHAPES[to];
+    for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
+      tmpPos[i] = a.pos[i] + (b.pos[i] - a.pos[i]) * ease;
+      tmpCol[i] = a.col[i] + (b.col[i] - a.col[i]) * ease;
+    }
+    geometry.attributes.position.array.set(tmpPos);
+    geometry.attributes.color.array.set(tmpCol);
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.color.needsUpdate = true;
+
+    // Nucleo brillante: solo visible cerca de la escena galaxia (progress cercano a 0)
+    const coreOpacity = Math.max(0, 1 - currentProgress) * 0.9;
+    core.material.opacity = coreOpacity;
+    glow.material.opacity = coreOpacity * 0.17;
+
+    container.style.opacity = String(currentOpacity);
+  }
+
+  // ---- Vuelo de entrada de la camara ----
+  const flyTarget = { y: 3.2, z: 7 };
+  const flyStart  = { y: camera.position.y, z: camera.position.z };
+  const flyDuration = 2200;
+  const flyStartTime = performance.now();
+  function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+
+  // ---- Paralaje sutil con el mouse (solo cerca del hero) ----
+  let mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  // ---- Pausar render si la pestaña no esta visible (ahorro recursos) ----
+  let tabVisible = true;
+  document.addEventListener('visibilitychange', () => { tabVisible = !document.hidden; });
+
+  window.addEventListener('resize', () => {
+    recalcAnchors();
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  function animate(now) {
+    requestAnimationFrame(animate);
+    if (!tabVisible) return;
+    if (document.body.classList.contains('light')) return; // no renderizar en modo claro
+
+    applyBlend();
+
+    const scrollY = window.scrollY;
+    const flyT = Math.min((now - flyStartTime) / flyDuration, 1);
+    if (flyT < 1 && scrollY < yFeatures) {
+      const eased = easeOutCubic(flyT);
+      camera.position.y = flyStart.y + (flyTarget.y - flyStart.y) * eased;
+      camera.position.z = flyStart.z + (flyTarget.z - flyStart.z) * eased;
+    } else if (scrollY < yFeatures) {
+      camera.position.y = flyTarget.y + mouseY * 0.4;
+      camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.03;
+    } else {
+      // Mas alla del hero: camara fija razonable, sin paralaje de mouse
+      camera.position.x += (0 - camera.position.x) * 0.05;
+      camera.position.y += (flyTarget.y - camera.position.y) * 0.02;
+    }
+    camera.lookAt(0, 0, 0);
+
+    particles.rotation.y += 0.0006;
+    stars.rotation.y += 0.0001;
+    const t = now * 0.001;
+    core.scale.setScalar(1 + Math.sin(t*1.5)*0.06);
+    glow.scale.setScalar(1 + Math.sin(t*1.5)*0.1);
+
+    renderer.render(scene, camera);
+  }
+
+  requestAnimationFrame(animate);
+
+  // Recalcular anclajes despues de que cargue todo el contenido (imagenes, fuentes, etc.)
+  window.addEventListener('load', recalcAnchors);
+})();
 </script>
 
 </body>
