@@ -6,1331 +6,1185 @@
 <title>KINO AI — Tu asistente personal de IA</title>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="535b1de8-48a7-4e2e-8a07-ce7bc76ae714"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #12121a;
-    --bg3: #1a1a26;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.15);
-    --text: #f0f0f8;
-    --muted: #8888aa;
-    --accent: #6c63ff;
-    --accent2: #4fc3f7;
-    --accent-glow: rgba(108,99,255,0.15);
-    --nav-bg: rgba(10,10,15,0.85);
-  }
-
-  body.light {
-    --bg: #f7f7fb;
-    --bg2: #ffffff;
-    --bg3: #eeeef5;
-    --border: rgba(20,20,40,0.08);
-    --border2: rgba(20,20,40,0.15);
-    --text: #14141f;
-    --muted: #6b6b85;
-    --accent: #6c63ff;
-    --accent2: #2b8fc7;
-    --accent-glow: rgba(108,99,255,0.10);
-    --nav-bg: rgba(255,255,255,0.85);
-  }
-
-  body { transition: background 0.2s, color 0.2s; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.6;
-  }
-
-  a { color: inherit; text-decoration: none; }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2rem;
-    background: var(--nav-bg);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-size: 1.1rem; font-weight: 700; letter-spacing: 0.08em;
-    color: var(--text);
-  }
-
-  .nav-logo span { color: var(--accent); }
-
-  .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; color: var(--muted); align-items: center; }
-  .nav-links a:hover { color: var(--text); }
-
-  .lang-toggle {
-    display: flex; gap: 0.5rem;
-  }
-
-  .lang-btn {
-    background: none; border: 1px solid var(--border2); color: var(--muted);
-    padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .lang-btn.active, .lang-btn:hover {
-    background: var(--accent); border-color: var(--accent); color: #fff;
-  }
-
-  .nav-right { display: flex; align-items: center; gap: 1rem; }
-
-  .theme-btn {
-    background: none; border: 1px solid var(--border2); color: var(--muted);
-    width: 32px; height: 32px; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-
-  .theme-btn:hover { background: var(--bg3); color: var(--text); }
-
-  .menu-btn {
-    display: none;
-    background: none; border: 1px solid var(--border2); color: var(--text);
-    width: 32px; height: 32px; border-radius: 6px; cursor: pointer;
-    align-items: center; justify-content: center; font-size: 1.1rem;
-  }
-
-  .mobile-menu {
-    display: none;
-    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
-    background: var(--nav-bg); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    flex-direction: column; padding: 1rem 2rem; gap: 1rem;
-    font-size: 0.95rem; color: var(--muted);
-  }
-
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a:hover { color: var(--text); }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center;
-    padding: 6rem 2rem 4rem;
-  }
-
-  .hero-badge {
-    display: inline-block;
-    background: rgba(18,18,26,0.55);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(108,99,255,0.35);
-    color: #b8b0ff;
-    font-size: 0.8rem; letter-spacing: 0.1em;
-    padding: 0.4rem 1rem; border-radius: 20px;
-    margin-bottom: 2rem;
-  }
-
-  .hero h1 {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 800; letter-spacing: -0.02em;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 2px 28px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.5);
-  }
-
-  .hero h1 .dot { color: var(--accent); }
-
-  .hero-sub {
-    font-size: 1.15rem; color: var(--muted);
-    max-width: 520px; margin: 0 auto 2.5rem;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
-  }
-
-  .hero-buttons {
-    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    margin-bottom: 3rem;
-  }
-
-  .btn-primary {
-    background: var(--accent); color: #fff;
-    padding: 0.85rem 2rem; border-radius: 10px;
-    font-size: 1rem; font-weight: 600;
-    border: none; cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    display: inline-flex; align-items: center; gap: 0.5rem;
-  }
-
-  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-
-  .btn-secondary {
-    background: transparent; color: var(--text);
-    padding: 0.85rem 2rem; border-radius: 10px;
-    font-size: 1rem; font-weight: 500;
-    border: 1px solid var(--border2); cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .btn-secondary:hover { background: var(--bg3); }
-
-  .hero-note {
-    font-size: 0.82rem; color: var(--muted);
-  }
-
-  /* PREVIEW */
-  .preview {
-    width: 100%; max-width: 820px; margin: 0 auto 2rem;
-    border-radius: 16px; overflow: hidden;
-    border: 1px solid var(--border2);
-    background: var(--bg2);
-  }
-
-  .preview-bar {
-    background: var(--bg3);
-    padding: 0.6rem 1rem;
-    display: flex; align-items: center; gap: 0.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-r { background: #ff5f57; }
-  .dot-y { background: #febc2e; }
-  .dot-g { background: #28c840; }
-
-  .preview-title {
-    flex: 1; text-align: center;
-    font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em;
-  }
-
-  .preview-content {
-    padding: 2rem;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-  }
-
-  .preview-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem;
-  }
-
-  .preview-box-label {
-    font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-  }
-
-  .preview-box-text {
-    font-size: 0.85rem; color: var(--muted); line-height: 1.5;
-  }
-
-  .preview-box-text strong { color: var(--text); }
-
-  .preview-mic {
-    grid-column: 1 / -1;
-    display: flex; align-items: center; gap: 1rem;
-    background: var(--bg);
-    border: 1px solid rgba(108,99,255,0.3);
-    border-radius: 10px; padding: 1rem 1.25rem;
-  }
-
-  .mic-icon {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent-glow);
-    border: 1px solid rgba(108,99,255,0.4);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  .mic-wave {
-    display: flex; align-items: center; gap: 3px; flex: 1;
-  }
-
-  .wave-bar {
-    width: 3px; border-radius: 2px; background: var(--accent);
-    animation: wave 1s ease-in-out infinite;
-  }
-
-  .wave-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
-  .wave-bar:nth-child(2) { height: 18px; animation-delay: 0.1s; }
-  .wave-bar:nth-child(3) { height: 12px; animation-delay: 0.2s; }
-  .wave-bar:nth-child(4) { height: 22px; animation-delay: 0.15s; }
-  .wave-bar:nth-child(5) { height: 10px; animation-delay: 0.05s; }
-  .wave-bar:nth-child(6) { height: 16px; animation-delay: 0.25s; }
-  .wave-bar:nth-child(7) { height: 8px; animation-delay: 0.1s; }
-
-  @keyframes wave {
-    0%, 100% { transform: scaleY(1); opacity: 0.7; }
-    50% { transform: scaleY(1.6); opacity: 1; }
-  }
-
-  .mic-text { font-size: 0.85rem; color: var(--muted); }
-  .mic-text strong { color: var(--text); }
-
-  /* FEATURES */
-  .section {
-    max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
-  }
-
-  .section-label {
-    font-size: 0.8rem; letter-spacing: 0.12em; color: var(--accent);
-    text-transform: uppercase; margin-bottom: 1rem;
-    text-shadow: 0 2px 14px rgba(0,0,0,0.5);
-  }
-
-  .section-title {
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-    font-weight: 700; letter-spacing: -0.02em;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 20px rgba(0,0,0,0.55);
-  }
-
-  .section-sub {
-    color: var(--muted); font-size: 1.05rem; max-width: 480px;
-    margin-bottom: 3rem;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
-  }
-
-  .feature-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px; padding: 1.5rem;
-    transition: border-color 0.2s;
-  }
-
-  .feature-card:hover { border-color: var(--border2); }
-
-  .feature-icon {
-    width: 44px; height: 44px;
-    background: var(--accent-glow);
-    border: 1px solid rgba(108,99,255,0.25);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.25rem; margin-bottom: 1rem;
-  }
-
-  .feature-title {
-    font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem;
-  }
-
-  .feature-desc {
-    font-size: 0.88rem; color: var(--muted); line-height: 1.6;
-  }
-
-  /* REQUIREMENTS */
-  .req-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .req-item {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem 1.25rem;
-    display: flex; align-items: flex-start; gap: 0.75rem;
-  }
-
-  .req-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--accent); margin-top: 6px; flex-shrink: 0;
-  }
-
-  .req-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.2rem; }
-  .req-val { font-size: 0.92rem; font-weight: 500; }
-
-  /* STEPS */
-  .steps-grid {
-    display: grid; gap: 1rem;
-  }
-
-  .step-item {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.25rem 1.5rem;
-    display: flex; align-items: flex-start; gap: 1rem;
-  }
-
-  .step-num {
-    flex-shrink: 0; width: 32px; height: 32px;
-    border-radius: 50%; background: var(--accent-glow);
-    border: 1px solid rgba(108,99,255,0.3); color: #a89fff;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 0.95rem;
-  }
-
-  .step-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
-  .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
-  .step-desc a { color: var(--accent2); text-decoration: underline; }
-
-  /* FAQ */
-  .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
-
-  .faq-item {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 0;
-  }
-
-  .faq-item summary {
-    cursor: pointer; padding: 1rem 1.25rem;
-    font-size: 0.95rem; font-weight: 600;
-    display: flex; align-items: center; justify-content: space-between;
-    list-style: none;
-  }
-
-  .faq-item summary::-webkit-details-marker { display: none; }
-
-  .faq-item summary::after {
-    content: '+'; color: var(--accent); font-size: 1.2rem; font-weight: 400;
-    margin-left: 1rem; flex-shrink: 0;
-  }
-
-  .faq-item[open] summary::after { content: '−'; }
-
-  .faq-answer {
-    padding: 0 1.25rem 1.1rem;
-    font-size: 0.88rem; color: var(--muted); line-height: 1.7;
-  }
-
-  .faq-answer a { color: var(--accent2); text-decoration: underline; }
-
-  /* COMPARISON */
-  .cmp-table {
-    width: 100%; border-collapse: collapse;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; overflow: hidden;
-    font-size: 0.9rem;
-  }
-
-  .cmp-table th, .cmp-table td {
-    padding: 0.9rem 1rem; text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .cmp-table th {
-    color: var(--muted); font-size: 0.78rem; letter-spacing: 0.05em;
-    text-transform: uppercase; font-weight: 600;
-    background: var(--bg3);
-  }
-
-  .cmp-table th:first-child, .cmp-table td:first-child {
-    color: var(--text); font-weight: 500;
-  }
-
-  .cmp-table tr:last-child td { border-bottom: none; }
-
-  .cmp-table .cmp-kino { color: var(--accent2); font-weight: 600; }
-  .cmp-yes { color: #4fc3f7; }
-  .cmp-no { color: #66667a; }
-
-  .cmp-wrap { overflow-x: auto; }
-
-  @media (max-width: 600px) {
-    .cmp-table { font-size: 0.8rem; }
-    .cmp-table th, .cmp-table td { padding: 0.6rem 0.6rem; }
-  }
-
-  /* CHANGELOG */
-  .changelog-list { display: flex; flex-direction: column; gap: 1rem; }
-
-  .changelog-item {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.25rem 1.5rem;
-  }
-
-  .changelog-head {
-    display: flex; align-items: center; gap: 0.75rem;
-    margin-bottom: 0.5rem; flex-wrap: wrap;
-  }
-
-  .changelog-version {
-    display: inline-block;
-    background: var(--accent-glow);
-    border: 1px solid rgba(108,99,255,0.3);
-    color: #a89fff;
-    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em;
-    padding: 0.2rem 0.7rem; border-radius: 20px;
-  }
-
-  .changelog-date { font-size: 0.8rem; color: var(--muted); }
-
-  .changelog-list ul {
-    list-style: none; font-size: 0.9rem; color: var(--muted);
-    line-height: 1.8;
-  }
-
-  .changelog-list ul li::before {
-    content: '— '; color: var(--accent2);
-  }
-
-  /* CTA */
-  .cta-section {
-    text-align: center;
-    padding: 5rem 2rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .cta-section h2 {
-    font-size: clamp(1.8rem, 3vw, 2.5rem);
-    font-weight: 700; margin-bottom: 1rem;
-  }
-
-  .cta-section p {
-    color: var(--muted); margin-bottom: 2rem; font-size: 1.05rem;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem;
-    text-align: center;
-    font-size: 0.82rem; color: var(--muted);
-  }
-
-  footer a { color: var(--muted); }
-  footer a:hover { color: var(--text); }
-
-  /* LANG */
-  [data-lang="en"] { display: none; }
-  body.en [data-lang="es"] { display: none; }
-  body.en [data-lang="en"] { display: block; }
-  body.en .hero-sub[data-lang="en"],
-  body.en .feature-desc[data-lang="en"],
-  body.en .mic-text[data-lang="en"] { display: block; }
-  span[data-lang="es"] { display: inline; }
-  span[data-lang="en"] { display: none; }
-  body.en span[data-lang="es"] { display: none; }
-  body.en span[data-lang="en"] { display: inline; }
-
-  @media (max-width: 600px) {
-    .preview-content { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
-    .menu-btn { display: flex; }
-  }
-  /* ---- EFECTO ROLLO ---- */
-  .roll-section {
-    opacity: 0;
-    transform: scaleX(0.82) scaleY(0.94);
-    clip-path: inset(4% 8% round 12px);
-    transition:
-      opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-      clip-path 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform, opacity, clip-path;
-  }
-  .roll-section.unrolled {
-    opacity: 1;
-    transform: scaleX(1) scaleY(1);
-    clip-path: inset(0% 0% round 0px);
-  }
-
-  /* ---- ESCENA 3D DE FONDO ---- */
-  #scene-container {
-    position: fixed; inset: 0;
-    z-index: -1;
-    transition: opacity 0.6s ease;
-  }
-  body.light #scene-container { opacity: 0 !important; pointer-events: none; }
-  body.light .hero h1, body.light .hero-sub,
-  body.light .section-title, body.light .section-sub, body.light .section-label {
-    text-shadow: none;
-  }
-  body.light .hero-badge { background: var(--accent-glow); backdrop-filter: none; }
-
-  /* ---- MOBILE (solo aplica en pantallas chicas, no toca el diseño de escritorio) ---- */
-  @media (max-width: 640px) {
-    nav { padding: 0.85rem 1.25rem; }
-    .nav-logo { font-size: 1rem; }
-    .nav-right { gap: 0.6rem; }
-    .theme-btn, .menu-btn { width: 38px; height: 38px; }
-    .mobile-menu { padding: 1rem 1.25rem; }
-
-    .hero { padding: 5.5rem 1.25rem 3rem; }
-    .hero-badge { font-size: 0.72rem; padding: 0.4rem 0.9rem; margin-bottom: 1.5rem; }
-    .hero h1 { margin-bottom: 1.1rem; }
-    .hero-sub { font-size: 1rem; max-width: 92%; margin-bottom: 2rem; }
-
-    .hero-buttons {
-      flex-direction: column; flex-wrap: nowrap;
-      width: 100%; max-width: 320px; margin: 0 auto 2.5rem; gap: 0.75rem;
-    }
-    .btn-primary, .btn-secondary { width: 100%; justify-content: center; padding: 0.9rem 1.5rem; }
-
-    .preview { margin-bottom: 1.5rem; }
-    .preview-content { padding: 1.25rem; gap: 0.75rem; }
-    .preview-bar { padding: 0.5rem 0.85rem; }
-
-    .section { padding: 3.5rem 1.25rem; }
-    .section-sub { max-width: 100%; }
-
-    .features-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .feature-card { padding: 1.25rem; }
-
-    .req-grid { grid-template-columns: 1fr; gap: 0.75rem; }
-
-    .step-item { padding: 1rem 1.1rem; gap: 0.85rem; }
-
-    .faq-item summary { padding: 0.9rem 1.1rem; font-size: 0.9rem; }
-    .faq-answer { padding: 0 1.1rem 1rem; }
-
-    .cta-section { padding: 3.5rem 1.25rem; }
-
-    footer { padding: 1.75rem 1.25rem; }
-  }
-
-  @media (max-width: 380px) {
-    .hero h1 { font-size: 2.15rem; }
-    .hero-badge { font-size: 0.68rem; }
-    .step-item { flex-direction: column; }
-  }
-
+/* =====================================================
+   RESET & BASE
+===================================================== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background:#000;
+  color:#f0f0f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x:hidden;
+}
+
+/* =====================================================
+   CANVAS FIJO DE FONDO
+===================================================== */
+#gl-canvas {
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+nav {
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:1.2rem 2.5rem;
+  background:rgba(0,0,0,0.3);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.nav-logo {
+  font-size:1.1rem;
+  font-weight:800;
+  letter-spacing:0.12em;
+  color:#fff;
+}
+.nav-logo .dot { color:#6c63ff; }
+.nav-links {
+  display:flex;
+  gap:2rem;
+  align-items:center;
+  font-size:0.85rem;
+  color:rgba(255,255,255,0.55);
+}
+.nav-links a {
+  color:inherit;
+  text-decoration:none;
+  transition:color 0.2s;
+}
+.nav-links a:hover { color:#fff; }
+.nav-right {
+  display:flex;
+  align-items:center;
+  gap:0.7rem;
+}
+.lang-btn {
+  background:none;
+  border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.5);
+  font-size:0.78rem;
+  font-weight:600;
+  padding:0.3rem 0.6rem;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.lang-btn.active, .lang-btn:hover {
+  background:rgba(108,99,255,0.25);
+  border-color:#6c63ff;
+  color:#fff;
+}
+
+/* =====================================================
+   SECCIONES GENERALES
+===================================================== */
+section {
+  position:relative;
+  z-index:1;
+}
+
+/* =====================================================
+   HERO
+===================================================== */
+.hero {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:6rem 2rem 3rem;
+}
+.hero-eyebrow {
+  font-size:0.78rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:rgba(108,99,255,0.9);
+  margin-bottom:1.5rem;
+  opacity:0;
+  animation:fadeUp 0.9s 0.3s forwards;
+}
+.hero-logo {
+  font-size:clamp(5rem,14vw,11rem);
+  font-weight:900;
+  letter-spacing:0.04em;
+  line-height:1;
+  color:#fff;
+  margin-bottom:0.3rem;
+  opacity:0;
+  animation:fadeUp 0.9s 0.5s forwards;
+  text-shadow:0 0 80px rgba(108,99,255,0.35);
+}
+.hero-logo .dot { color:#6c63ff; }
+.hero-tagline {
+  font-size:clamp(1.1rem,2.5vw,1.6rem);
+  font-weight:300;
+  color:rgba(255,255,255,0.55);
+  letter-spacing:0.04em;
+  margin-bottom:3rem;
+  opacity:0;
+  animation:fadeUp 0.9s 0.7s forwards;
+}
+.hero-tagline strong { color:#fff; font-weight:600; }
+.hero-actions {
+  display:flex;
+  gap:1rem;
+  justify-content:center;
+  flex-wrap:wrap;
+  opacity:0;
+  animation:fadeUp 0.9s 0.9s forwards;
+}
+.btn-glow {
+  background:#6c63ff;
+  color:#fff;
+  border:none;
+  padding:0.9rem 2.2rem;
+  border-radius:10px;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 0 40px rgba(108,99,255,0.5), 0 0 80px rgba(108,99,255,0.2);
+  transition:all 0.2s;
+  letter-spacing:0.02em;
+}
+.btn-glow:hover {
+  transform:translateY(-2px);
+  box-shadow:0 0 60px rgba(108,99,255,0.7), 0 0 100px rgba(108,99,255,0.3);
+}
+.btn-ghost {
+  background:rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.75);
+  border:1px solid rgba(255,255,255,0.15);
+  padding:0.9rem 2.2rem;
+  border-radius:10px;
+  font-size:1rem;
+  font-weight:500;
+  cursor:pointer;
+  backdrop-filter:blur(6px);
+  transition:all 0.2s;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+}
+.btn-ghost:hover {
+  background:rgba(255,255,255,0.08);
+  border-color:rgba(255,255,255,0.3);
+  color:#fff;
+}
+.hero-counter {
+  margin-top:1.8rem;
+  font-size:0.82rem;
+  color:rgba(255,255,255,0.35);
+  opacity:0;
+  animation:fadeUp 0.9s 1.1s forwards;
+}
+.hero-counter strong { color:rgba(255,255,255,0.75); }
+.scroll-hint {
+  position:absolute;
+  bottom:2rem;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.5rem;
+  color:rgba(255,255,255,0.25);
+  font-size:0.75rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  opacity:0;
+  animation:fadeUp 0.9s 1.4s forwards;
+}
+.scroll-line {
+  width:1px;
+  height:40px;
+  background:linear-gradient(to bottom, rgba(108,99,255,0.8), transparent);
+  animation:scrollPulse 2s infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity:0.3; transform:scaleY(1); }
+  50% { opacity:1; transform:scaleY(1.1); }
+}
+
+/* =====================================================
+   FEATURES
+===================================================== */
+.features {
+  padding:7rem 2rem;
+  max-width:1100px;
+  margin:0 auto;
+}
+.section-label {
+  font-size:0.75rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:#6c63ff;
+  margin-bottom:1rem;
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity 0.7s, transform 0.7s;
+}
+.section-label.vis { opacity:1; transform:translateY(0); }
+.section-h2 {
+  font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:800;
+  letter-spacing:-0.02em;
+  line-height:1.15;
+  margin-bottom:0.8rem;
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity 0.7s 0.1s, transform 0.7s 0.1s;
+}
+.section-h2.vis { opacity:1; transform:translateY(0); }
+.section-sub {
+  font-size:1.05rem;
+  color:rgba(255,255,255,0.45);
+  margin-bottom:3.5rem;
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity 0.7s 0.2s, transform 0.7s 0.2s;
+}
+.section-sub.vis { opacity:1; transform:translateY(0); }
+.features-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:1.2rem;
+}
+.feat-card {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:18px;
+  padding:1.8rem;
+  backdrop-filter:blur(8px);
+  transition:all 0.3s;
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity 0.6s, transform 0.6s, background 0.3s, border-color 0.3s;
+}
+.feat-card.vis { opacity:1; transform:translateY(0); }
+.feat-card:hover {
+  background:rgba(108,99,255,0.07);
+  border-color:rgba(108,99,255,0.25);
+  transform:translateY(-3px);
+}
+.feat-icon {
+  font-size:2rem;
+  margin-bottom:1rem;
+  display:block;
+}
+.feat-title {
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:0.5rem;
+  color:#fff;
+}
+.feat-desc {
+  font-size:0.87rem;
+  color:rgba(255,255,255,0.45);
+  line-height:1.6;
+}
+
+/* =====================================================
+   STATS / DIFFERENTIATORS
+===================================================== */
+.stats {
+  padding:6rem 2rem;
+  text-align:center;
+  max-width:960px;
+  margin:0 auto;
+}
+.stats-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;
+  margin-top:3.5rem;
+}
+@media(max-width:640px) { .stats-grid { grid-template-columns:1fr; } }
+.stat-card {
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:20px;
+  padding:2.5rem 1.5rem;
+  backdrop-filter:blur(10px);
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity 0.7s, transform 0.7s;
+}
+.stat-card.vis { opacity:1; transform:translateY(0); }
+.stat-num {
+  font-size:3rem;
+  font-weight:900;
+  color:#6c63ff;
+  letter-spacing:-0.03em;
+  line-height:1;
+  margin-bottom:0.5rem;
+}
+.stat-label {
+  font-size:0.88rem;
+  color:rgba(255,255,255,0.45);
+  line-height:1.5;
+}
+
+/* =====================================================
+   COMPARISON
+===================================================== */
+.comparison {
+  padding:6rem 2rem;
+  max-width:860px;
+  margin:0 auto;
+}
+.comp-table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:2.5rem;
+  font-size:0.9rem;
+}
+.comp-table th, .comp-table td {
+  padding:1rem 1.2rem;
+  text-align:left;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.comp-table th {
+  font-size:0.8rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.4);
+  padding-bottom:1.2rem;
+}
+.comp-table th:nth-child(2) { color:#6c63ff; }
+.comp-table td:nth-child(2) { color:#4fc3f7; font-weight:600; }
+.comp-table td:nth-child(3) { color:rgba(255,255,255,0.35); }
+.comp-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+/* =====================================================
+   CTA SECTION
+===================================================== */
+.cta-section {
+  padding:8rem 2rem;
+  text-align:center;
+  position:relative;
+}
+.cta-h2 {
+  font-size:clamp(2.5rem,6vw,5rem);
+  font-weight:900;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:1.5rem;
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity 0.8s, transform 0.8s;
+}
+.cta-h2.vis { opacity:1; transform:translateY(0); }
+.cta-h2 .accent { color:#6c63ff; }
+.cta-sub {
+  font-size:1.1rem;
+  color:rgba(255,255,255,0.4);
+  margin-bottom:2.5rem;
+  opacity:0;
+  transition:opacity 0.8s 0.15s, transform 0.8s 0.15s;
+  transform:translateY(16px);
+}
+.cta-sub.vis { opacity:1; transform:translateY(0); }
+
+/* =====================================================
+   FAQ
+===================================================== */
+.faq-section {
+  padding:5rem 2rem;
+  max-width:740px;
+  margin:0 auto;
+}
+.faq-list { display:flex; flex-direction:column; gap:0.75rem; }
+.faq-item {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity 0.5s, transform 0.5s, background 0.2s;
+}
+.faq-item.vis { opacity:1; transform:translateY(0); }
+.faq-item:hover { background:rgba(255,255,255,0.05); }
+.faq-item summary {
+  padding:1.1rem 1.3rem;
+  font-size:0.95rem;
+  font-weight:600;
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  color:rgba(255,255,255,0.85);
+}
+.faq-item summary::-webkit-details-marker { display:none; }
+.faq-item summary::after {
+  content:'＋';
+  font-size:1.1rem;
+  color:#6c63ff;
+  flex-shrink:0;
+}
+.faq-item[open] summary::after { content:'−'; }
+.faq-answer {
+  padding:0 1.3rem 1.2rem;
+  font-size:0.88rem;
+  color:rgba(255,255,255,0.45);
+  line-height:1.7;
+}
+
+/* =====================================================
+   REQUIREMENTS & STEPS
+===================================================== */
+.req-section, .steps-section {
+  padding:5rem 2rem;
+  max-width:860px;
+  margin:0 auto;
+}
+.req-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:1rem;
+  margin-top:2rem;
+}
+.req-card {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;
+  padding:1.2rem 1.4rem;
+  opacity:0; transform:translateY(20px);
+  transition:opacity 0.5s, transform 0.5s;
+}
+.req-card.vis { opacity:1; transform:translateY(0); }
+.req-label { font-size:0.75rem; color:rgba(255,255,255,0.35); margin-bottom:0.3rem; letter-spacing:0.06em; text-transform:uppercase; }
+.req-val { font-size:0.95rem; font-weight:600; color:rgba(255,255,255,0.85); }
+.steps-list { display:flex; flex-direction:column; gap:0.8rem; margin-top:2rem; }
+.step-row {
+  display:flex;
+  gap:1.2rem;
+  align-items:flex-start;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;
+  padding:1.2rem 1.4rem;
+  opacity:0; transform:translateY(20px);
+  transition:opacity 0.5s, transform 0.5s;
+}
+.step-row.vis { opacity:1; transform:translateY(0); }
+.step-num {
+  flex-shrink:0;
+  width:28px; height:28px;
+  border-radius:50%;
+  background:#6c63ff;
+  color:#fff;
+  font-size:0.78rem;
+  font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  margin-top:2px;
+}
+.step-title { font-size:0.95rem; font-weight:600; margin-bottom:0.25rem; color:rgba(255,255,255,0.9); }
+.step-desc { font-size:0.84rem; color:rgba(255,255,255,0.4); line-height:1.6; }
+.step-desc a { color:#4fc3f7; text-decoration:underline; }
+
+/* =====================================================
+   CHANGELOG
+===================================================== */
+.changelog-section {
+  padding:5rem 2rem;
+  max-width:760px;
+  margin:0 auto;
+}
+.changelog-list { display:flex; flex-direction:column; gap:1rem; }
+.changelog-entry {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;
+  padding:1.4rem 1.6rem;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.5s, transform 0.5s;
+}
+.changelog-entry.vis { opacity:1; transform:translateY(0); }
+.changelog-head { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem; }
+.changelog-version {
+  font-size:0.75rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  background:rgba(108,99,255,0.2);
+  border:1px solid rgba(108,99,255,0.3);
+  color:#a89fff;
+  padding:0.2rem 0.6rem;
+  border-radius:6px;
+}
+.changelog-date { font-size:0.8rem; color:rgba(255,255,255,0.3); }
+.changelog-items {
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:0.4rem;
+}
+.changelog-items li {
+  font-size:0.87rem;
+  color:rgba(255,255,255,0.45);
+  padding-left:1rem;
+  position:relative;
+  line-height:1.5;
+}
+.changelog-items li::before {
+  content:'→';
+  position:absolute;
+  left:0;
+  color:#6c63ff;
+  font-size:0.75rem;
+}
+
+/* =====================================================
+   NEWSLETTER / FOOTER
+===================================================== */
+.newsletter-section {
+  padding:4rem 2rem;
+  max-width:540px;
+  margin:0 auto;
+  text-align:center;
+}
+.nl-form {
+  display:flex;
+  gap:0.6rem;
+  margin-top:1.5rem;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.nl-input {
+  flex:1;
+  min-width:200px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;
+  color:#fff;
+  font-size:0.9rem;
+  padding:0.75rem 1rem;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.nl-input:focus { border-color:#6c63ff; }
+.nl-input::placeholder { color:rgba(255,255,255,0.3); }
+.nl-btn {
+  background:#6c63ff;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size:0.9rem;
+  font-weight:700;
+  padding:0.75rem 1.3rem;
+  cursor:pointer;
+  transition:opacity 0.2s;
+}
+.nl-btn:hover { opacity:0.85; }
+#nl-msg { font-size:0.82rem; margin-top:0.8rem; }
+footer {
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:2rem 2.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:1rem;
+  font-size:0.8rem;
+  color:rgba(255,255,255,0.3);
+}
+footer a { color:rgba(255,255,255,0.4); text-decoration:none; }
+footer a:hover { color:#fff; }
+
+/* =====================================================
+   DOWNLOAD MODAL
+===================================================== */
+#download-modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(8px);
+  justify-content:center;
+  align-items:center;
+}
+.modal-box {
+  background:#0d0d18;
+  border:1px solid rgba(108,99,255,0.3);
+  border-radius:22px;
+  padding:2.5rem 2.2rem;
+  width:100%;
+  max-width:420px;
+  margin:1rem;
+  box-shadow:0 0 80px rgba(108,99,255,0.2);
+}
+.modal-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:1.8rem;
+}
+.modal-title { font-size:1.2rem; font-weight:800; }
+.modal-close {
+  background:none;
+  border:none;
+  color:rgba(255,255,255,0.4);
+  font-size:1.3rem;
+  cursor:pointer;
+  padding:0.2rem;
+  transition:color 0.2s;
+}
+.modal-close:hover { color:#fff; }
+.modal-sub { font-size:0.82rem; color:rgba(255,255,255,0.35); margin-top:0.2rem; }
+.modal-label {
+  display:block;
+  font-size:0.78rem;
+  color:rgba(255,255,255,0.45);
+  margin-bottom:0.4rem;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.modal-input {
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  color:#fff;
+  font-size:0.95rem;
+  padding:0.8rem 1rem;
+  margin-bottom:1rem;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.modal-input:focus { border-color:#6c63ff; }
+.modal-input::placeholder { color:rgba(255,255,255,0.25); }
+#dl-msg { font-size:0.84rem; margin-bottom:0.8rem; }
+.modal-notice {
+  font-size:0.75rem;
+  color:rgba(255,255,255,0.3);
+  text-align:center;
+  margin-top:0.8rem;
+  line-height:1.5;
+}
+#dl-success {
+  display:none;
+  text-align:center;
+  padding:1.5rem 0;
+}
+#dl-success .ok-icon { font-size:3rem; margin-bottom:1rem; display:block; }
+#dl-success .ok-title { font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
+#dl-success .ok-sub { font-size:0.85rem; color:rgba(255,255,255,0.4); }
+#dl-success a { color:#6c63ff; }
+
+/* =====================================================
+   LANG & ANIMATIONS
+===================================================== */
+[data-lang="en"] { display:none; }
+span[data-lang="en"] { display:none; }
+span[data-lang="es"] { display:inline; }
+body.en [data-lang="es"] { display:none; }
+body.en [data-lang="en"] { display:block; }
+body.en span[data-lang="es"] { display:none; }
+body.en span[data-lang="en"] { display:inline; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* Mobile nav */
+.hamburger { display:none; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; }
+#mobile-menu {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99;
+  background:rgba(0,0,0,0.96);
+  backdrop-filter:blur(16px);
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2rem;
+  font-size:1.3rem;
+  font-weight:700;
+}
+#mobile-menu.open { display:flex; }
+#mobile-menu a { color:rgba(255,255,255,0.7); text-decoration:none; }
+#mobile-menu a:hover { color:#fff; }
+.mob-close {
+  position:absolute;
+  top:1.5rem; right:1.5rem;
+  background:none; border:none; color:#fff; font-size:1.8rem; cursor:pointer;
+}
+@media(max-width:768px) {
+  .hamburger { display:block; }
+  .nav-links { display:none; }
+  .stats-grid { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
-<div id="scene-container"></div>
 
+<!-- CANVAS 3D -->
+<canvas id="gl-canvas"></canvas>
+
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">K<span>.</span>I<span>.</span>N<span>.</span>O</div>
+  <div class="nav-logo">K<span class="dot">.</span>I<span class="dot">.</span>N<span class="dot">.</span>O</div>
   <div class="nav-links">
     <a href="#features" data-lang="es">Funciones</a>
-    <a href="#features" data-lang="en">Features</a>
-    <a href="#primeros-pasos" data-lang="es">Primeros pasos</a>
-    <a href="#primeros-pasos" data-lang="en">Getting started</a>
+    <a href="#features" data-lang="en" style="display:none">Features</a>
     <a href="#requisitos" data-lang="es">Requisitos</a>
-    <a href="#requisitos" data-lang="en">Requirements</a>
-    <a href="#faq" data-lang="es">Preguntas frecuentes</a>
-    <a href="#faq" data-lang="en">FAQ</a>
-    <a href="#changelog" data-lang="es">Novedades</a>
-    <a href="#changelog" data-lang="en">Changelog</a>
+    <a href="#requisitos" data-lang="en" style="display:none">Requirements</a>
+    <a href="#primeros-pasos" data-lang="es">Primeros pasos</a>
+    <a href="#primeros-pasos" data-lang="en" style="display:none">Getting started</a>
+    <a href="#faq" data-lang="es">FAQ</a>
+    <a href="#faq" data-lang="en" style="display:none">FAQ</a>
   </div>
   <div class="nav-right">
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-    </div>
-    <button class="theme-btn" id="theme-btn" aria-label="Toggle theme" onclick="toggleTheme()">🌙</button>
-    <button class="menu-btn" id="menu-btn" aria-label="Menu" onclick="toggleMobileMenu()">☰</button>
+    <button class="lang-btn active" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
   </div>
+  <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
 </nav>
 
-<div class="mobile-menu" id="mobile-menu">
-  <a href="#features" data-lang="es" onclick="toggleMobileMenu()">Funciones</a>
-  <a href="#features" data-lang="en" onclick="toggleMobileMenu()">Features</a>
-  <a href="#primeros-pasos" data-lang="es" onclick="toggleMobileMenu()">Primeros pasos</a>
-  <a href="#primeros-pasos" data-lang="en" onclick="toggleMobileMenu()">Getting started</a>
-  <a href="#requisitos" data-lang="es" onclick="toggleMobileMenu()">Requisitos</a>
-  <a href="#requisitos" data-lang="en" onclick="toggleMobileMenu()">Requirements</a>
-  <a href="#faq" data-lang="es" onclick="toggleMobileMenu()">Preguntas frecuentes</a>
-  <a href="#faq" data-lang="en" onclick="toggleMobileMenu()">FAQ</a>
-  <a href="#changelog" data-lang="es" onclick="toggleMobileMenu()">Novedades</a>
-  <a href="#changelog" data-lang="en" onclick="toggleMobileMenu()">Changelog</a>
-  <a href="#descargar" data-lang="es" onclick="toggleMobileMenu()">Descargar</a>
-  <a href="#descargar" data-lang="en" onclick="toggleMobileMenu()">Download</a>
+<!-- MOBILE MENU -->
+<div id="mobile-menu">
+  <button class="mob-close" onclick="toggleMobileMenu()">✕</button>
+  <a href="#features" onclick="toggleMobileMenu()" data-lang="es">Funciones</a>
+  <a href="#features" onclick="toggleMobileMenu()" data-lang="en" style="display:none">Features</a>
+  <a href="#requisitos" onclick="toggleMobileMenu()" data-lang="es">Requisitos</a>
+  <a href="#requisitos" onclick="toggleMobileMenu()" data-lang="en" style="display:none">Requirements</a>
+  <a href="#primeros-pasos" onclick="toggleMobileMenu()" data-lang="es">Primeros pasos</a>
+  <a href="#primeros-pasos" onclick="toggleMobileMenu()" data-lang="en" style="display:none">Getting started</a>
+  <a href="#faq" onclick="toggleMobileMenu()">FAQ</a>
 </div>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">
-    <span data-lang="es">Asistente de IA personal para Windows</span>
-    <span data-lang="en">Personal AI assistant for Windows</span>
-  </div>
-
-  <h1>
-    K<span class="dot">.</span>I<span class="dot">.</span>N<span class="dot">.</span>O<br>
-    <span data-lang="es">Tu IA personal,<br>en tu PC</span>
-    <span data-lang="en">Your personal AI,<br>on your PC</span>
-  </h1>
-
-  <p class="hero-sub" data-lang="es">
-    Control por voz, base de datos amplia y totalmente liviano.
-    Sin servidores propios. Tus claves, tu privacidad.
+<section class="hero" id="hero">
+  <p class="hero-eyebrow" data-lang="es">Asistente de IA personal · Solo para Windows</p>
+  <p class="hero-eyebrow" data-lang="en" style="display:none">Personal AI assistant · Windows only</p>
+  <div class="hero-logo">K<span class="dot">.</span>I<span class="dot">.</span>N<span class="dot">.</span>O</div>
+  <p class="hero-tagline">
+    <span data-lang="es">Tu <strong>IA personal</strong>, viviendo en tu PC</span>
+    <span data-lang="en" style="display:none">Your <strong>personal AI</strong>, living on your PC</span>
   </p>
-  <p class="hero-sub" data-lang="en" style="display:none">
-    Voice control, broad knowledge base and completely lightweight.
-    No proprietary servers. Your keys, your privacy.
-  </p>
-
-  <div class="hero-buttons">
-    <button class="btn-primary" onclick="openDownloadModal()">
-      ↓ <span data-lang="es">Descargar gratis</span><span data-lang="en">Download free</span>
+  <div class="hero-actions">
+    <button class="btn-glow" onclick="openDownloadModal()">
+      <span data-lang="es">↓ Descargar gratis</span>
+      <span data-lang="en" style="display:none">↓ Download free</span>
     </button>
-    <a href="#features">
-      <button class="btn-secondary">
-        <span data-lang="es">Ver funciones</span><span data-lang="en">See features</span>
-      </button>
+    <a class="btn-ghost" href="#features">
+      <span data-lang="es">Ver funciones</span>
+      <span data-lang="en" style="display:none">See features</span>
     </a>
   </div>
-
-  <div id="download-counter" style="
-    display:none; align-items:center; justify-content:center; gap:8px;
-    margin-top:1.1rem; font-size:0.92rem; color:#9999bb;
-  ">
-    <span style="color:#4fc3f7;">🔥</span>
-    <span data-lang="es"><strong id="dl-count-es" style="color:#f0f0f8;">0</strong> personas ya descargaron KINO</span>
-    <span data-lang="en"><strong id="dl-count-en" style="color:#f0f0f8;">0</strong> people already downloaded KINO</span>
+  <div class="hero-counter" id="download-counter" style="display:none">
+    🔥 <strong id="dl-count-es">0</strong><span data-lang="es"> personas ya descargaron KINO</span>
+    <strong id="dl-count-en" style="display:none">0</strong><span data-lang="en" style="display:none"> people already downloaded KINO</span>
   </div>
-
-  <p class="hero-note" data-lang="es">Gratis · Solo para Windows · Requiere API key propia · Versión actual: v3.3</p>
-  <p class="hero-note" data-lang="en" style="display:none">Free · Windows only · Requires your own API key · Current version: v3.3</p>
-
-  <!-- APP PREVIEW -->
-  <div class="preview" style="margin-top: 3rem;">
-    <div class="preview-bar">
-      <div class="dot dot-r"></div>
-      <div class="dot dot-y"></div>
-      <div class="dot dot-g"></div>
-      <div class="preview-title">K.I.N.O — Personal AI</div>
-    </div>
-    <img src="./kino-preview.png" alt="KINO AI — interfaz de la aplicación" style="display:block; width:100%; height:auto;">
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>scroll</span>
   </div>
 </section>
 
 <!-- FEATURES -->
-<section class="section roll-section" id="features">
-  <p class="section-label">Features</p>
-  <h2 class="section-title" data-lang="es">Todo lo que KINO puede hacer</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">Everything KINO can do</h2>
-  <p class="section-sub" data-lang="es">Diseñado para ser tu copiloto diario en Windows, sin complicaciones.</p>
-  <p class="section-sub" data-lang="en" style="display:none">Designed to be your daily copilot on Windows, without the hassle.</p>
+<section id="features">
+  <div class="features">
+    <p class="section-label" data-lang="es">Funciones</p>
+    <p class="section-label" data-lang="en" style="display:none">Features</p>
+    <h2 class="section-h2">
+      <span data-lang="es">Todo lo que KINO puede hacer</span>
+      <span data-lang="en" style="display:none">Everything KINO can do</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="es">Diseñado para ser tu copiloto diario en Windows.</span>
+      <span data-lang="en" style="display:none">Designed to be your daily copilot on Windows.</span>
+    </p>
+    <div class="features-grid">
+      <div class="feat-card"><span class="feat-icon">🎙</span><div class="feat-title" data-lang="es">Control por voz</div><div class="feat-title" data-lang="en" style="display:none">Voice control</div><div class="feat-desc" data-lang="es">Hablale a KINO como si fuera una persona. Reconocimiento de voz en tiempo real, sin comandos rígidos.</div><div class="feat-desc" data-lang="en" style="display:none">Talk to KINO like a person. Real-time voice recognition, no rigid commands.</div></div>
+      <div class="feat-card"><span class="feat-icon">🧠</span><div class="feat-title" data-lang="es">IA de primer nivel</div><div class="feat-title" data-lang="en" style="display:none">Top-tier AI</div><div class="feat-desc" data-lang="es">Potenciado por Gemini y OpenRouter. Accedé a los mejores modelos de IA directamente desde tu escritorio.</div><div class="feat-desc" data-lang="en" style="display:none">Powered by Gemini and OpenRouter. Access the best AI models directly from your desktop.</div></div>
+      <div class="feat-card"><span class="feat-icon">⚡</span><div class="feat-title" data-lang="es">Liviano y rápido</div><div class="feat-title" data-lang="en" style="display:none">Lightweight & fast</div><div class="feat-desc" data-lang="es">Menos de 200 MB de RAM. No consume recursos en segundo plano. Tu PC sigue siendo tuya.</div><div class="feat-desc" data-lang="en" style="display:none">Under 200 MB RAM. No background resource drain. Your PC stays yours.</div></div>
+      <div class="feat-card"><span class="feat-icon">🔒</span><div class="feat-title" data-lang="es">Privacidad total</div><div class="feat-title" data-lang="en" style="display:none">Total privacy</div><div class="feat-desc" data-lang="es">Tus conversaciones no pasan por servidores de KINO. Todo va directo entre tu PC y el proveedor de IA que elegís.</div><div class="feat-desc" data-lang="en" style="display:none">Your conversations don't go through KINO servers. Everything goes directly between your PC and your chosen AI provider.</div></div>
+      <div class="feat-card"><span class="feat-icon">🖥</span><div class="feat-title" data-lang="es">Automatización</div><div class="feat-title" data-lang="en" style="display:none">Automation</div><div class="feat-desc" data-lang="es">KINO puede ver tu pantalla y ayudarte con lo que estás haciendo en ese momento.</div><div class="feat-desc" data-lang="en" style="display:none">KINO can see your screen and help you with whatever you're working on.</div></div>
+      <div class="feat-card"><span class="feat-icon">📊</span><div class="feat-title" data-lang="es">Análisis de datos y gráficos</div><div class="feat-title" data-lang="en" style="display:none">Data analysis and charts</div><div class="feat-desc" data-lang="es">Subí un Excel, CSV, Word o PDF y pedile a KINO que extraiga datos, calcule promedios o genere un gráfico al instante.</div><div class="feat-desc" data-lang="en" style="display:none">Upload an Excel, CSV, Word or PDF file and ask KINO to extract data, calculate averages, or generate a chart instantly.</div></div>
+      <div class="feat-card"><span class="feat-icon">🔗</span><div class="feat-title" data-lang="es">Integración con Google</div><div class="feat-title" data-lang="en" style="display:none">Google integration</div><div class="feat-desc" data-lang="es">Exportá resultados a Google Sheets o Drive, y abrí Docs, Gmail o Calendar con tu propia sesión, sin ventanas raras.</div><div class="feat-desc" data-lang="en" style="display:none">Export results to Google Sheets or Drive, and open Docs, Gmail or Calendar with your own session, no weird windows.</div></div>
+      <div class="feat-card"><span class="feat-icon">📁</span><div class="feat-title" data-lang="es">Gestión de archivos</div><div class="feat-title" data-lang="en" style="display:none">File management</div><div class="feat-desc" data-lang="es">Subí archivos directamente a la conversación. KINO los analiza, resume o procesa según lo que necesites.</div><div class="feat-desc" data-lang="en" style="display:none">Upload files directly to the conversation. KINO analyzes, summarizes or processes them as needed.</div></div>
+    </div>
+  </div>
+</section>
 
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">🎙</div>
-      <div class="feature-title" data-lang="es">Control por voz</div>
-      <div class="feature-title" data-lang="en" style="display:none">Voice control</div>
-      <div class="feature-desc" data-lang="es">Hablale a KINO como si fuera una persona. Reconocimiento de voz en tiempo real, sin comandos rígidos.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Talk to KINO like a person. Real-time voice recognition, no rigid commands.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🧠</div>
-      <div class="feature-title" data-lang="es">Base de conocimiento amplia</div>
-      <div class="feature-title" data-lang="en" style="display:none">Broad knowledge base</div>
-      <div class="feature-desc" data-lang="es">Potenciado por Gemini y OpenRouter. Accedé a los mejores modelos de IA directamente desde tu escritorio.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Powered by Gemini and OpenRouter. Access the best AI models directly from your desktop.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title" data-lang="es">Liviano y rápido</div>
-      <div class="feature-title" data-lang="en" style="display:none">Lightweight and fast</div>
-      <div class="feature-desc" data-lang="es">Menos de 200 MB de RAM en uso. No consume recursos en segundo plano. Tu PC sigue siendo tuya.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Under 200 MB RAM in use. No background resource drain. Your PC stays yours.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🔒</div>
-      <div class="feature-title" data-lang="es">Privacidad total</div>
-      <div class="feature-title" data-lang="en" style="display:none">Full privacy</div>
-      <div class="feature-desc" data-lang="es">Tus conversaciones no pasan por servidores de KINO. Todo va directo entre tu PC y el proveedor de IA que elegís.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Your conversations don't go through KINO servers. Everything goes directly between your PC and your chosen AI provider.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🖥</div>
-      <div class="feature-title" data-lang="es">Automatización de pantalla</div>
-      <div class="feature-title" data-lang="en" style="display:none">Screen automation</div>
-      <div class="feature-desc" data-lang="es">KINO puede ver tu pantalla y ayudarte con lo que estás haciendo en ese momento.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">KINO can see your screen and help you with whatever you're working on.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">📁</div>
-      <div class="feature-title" data-lang="es">Gestión de archivos</div>
-      <div class="feature-title" data-lang="en" style="display:none">File management</div>
-      <div class="feature-desc" data-lang="es">Subí archivos directamente a la conversación. KINO los analiza, resume o procesa según lo que necesites.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Upload files directly to the conversation. KINO analyzes, summarizes or processes them as needed.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title" data-lang="es">Análisis de datos y gráficos</div>
-      <div class="feature-title" data-lang="en" style="display:none">Data analysis and charts</div>
-      <div class="feature-desc" data-lang="es">Subí un Excel, CSV, Word o PDF y pedile a KINO que extraiga datos, calcule promedios o genere un gráfico al instante.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Upload an Excel, CSV, Word or PDF file and ask KINO to extract data, calculate averages, or generate a chart instantly.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔗</div>
-      <div class="feature-title" data-lang="es">Integración con Google</div>
-      <div class="feature-title" data-lang="en" style="display:none">Google integration</div>
-      <div class="feature-desc" data-lang="es">Exportá resultados a Google Sheets o Drive, y abrí Docs, Gmail o Calendar con tu propia sesión, sin ventanas raras.</div>
-      <div class="feature-desc" data-lang="en" style="display:none">Export results to Google Sheets or Drive, and open Docs, Gmail or Calendar with your own session, no weird windows.</div>
+<!-- STATS -->
+<section>
+  <div class="stats">
+    <p class="section-label" data-lang="es">Por qué KINO</p>
+    <p class="section-label" data-lang="en" style="display:none">Why KINO</p>
+    <h2 class="section-h2">
+      <span data-lang="es">IA para todos en tu equipo,<br>sin costos por asiento</span>
+      <span data-lang="en" style="display:none">AI for everyone on your team,<br>no per-seat costs</span>
+    </h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">&lt;200<span style="font-size:1.5rem">MB</span></div><div class="stat-label" data-lang="es">de RAM en uso. No consume nada en segundo plano.</div><div class="stat-label" data-lang="en" style="display:none">RAM usage. Zero background drain.</div></div>
+      <div class="stat-card"><div class="stat-num">0</div><div class="stat-label" data-lang="es">servidores de KINO. Tus datos quedan en tu PC.</div><div class="stat-label" data-lang="en" style="display:none">KINO servers. Your data stays on your PC.</div></div>
+      <div class="stat-card"><div class="stat-num">$0</div><div class="stat-label" data-lang="es">para usar KINO. 100% gratis, sin suscripciones.</div><div class="stat-label" data-lang="en" style="display:none">to use KINO. 100% free, no subscriptions.</div></div>
     </div>
   </div>
 </section>
 
 <!-- COMPARISON -->
-<section class="section roll-section" id="comparacion" style="padding-top: 0;">
-  <p class="section-label" data-lang="es">Comparativa</p>
-  <p class="section-label" data-lang="en" style="display:none">Comparison</p>
-  <h2 class="section-title" data-lang="es">¿En qué se diferencia de otros asistentes?</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">How is it different from other assistants?</h2>
-  <p class="section-sub" data-lang="es">KINO no es Alexa, Siri ni Cortana. Así se compara.</p>
-  <p class="section-sub" data-lang="en" style="display:none">KINO isn't Alexa, Siri or Cortana. Here's how it compares.</p>
-
-  <div class="cmp-wrap">
-    <table class="cmp-table">
-      <thead>
-        <tr>
-          <th data-lang="es"> </th>
-          <th data-lang="en" style="display:none"> </th>
-          <th class="cmp-kino">KINO AI</th>
-          <th data-lang="es">Alexa / Siri / Cortana</th>
-          <th data-lang="en" style="display:none">Alexa / Siri / Cortana</th>
-        </tr>
-      </thead>
+<section id="comparacion">
+  <div class="comparison">
+    <p class="section-label" data-lang="es">Comparativa</p>
+    <p class="section-label" data-lang="en" style="display:none">Comparison</p>
+    <h2 class="section-h2">
+      <span data-lang="es">No es Alexa. No es Cortana.</span>
+      <span data-lang="en" style="display:none">Not Alexa. Not Cortana.</span>
+    </h2>
+    <h3 class="section-sub" style="font-size:1.1rem;font-weight:700;">
+      <span data-lang="es">¿En qué se diferencia de otros asistentes?</span>
+      <span data-lang="en" style="display:none">How is it different from other assistants?</span>
+    </h3>
+    <p class="section-sub">
+      <span data-lang="es">KINO no es Alexa, Siri ni Cortana. Así se compara.</span>
+      <span data-lang="en" style="display:none">KINO isn't Alexa, Siri or Cortana. Here's how it compares.</span>
+    </p>
+    <table class="comp-table">
+      <thead><tr>
+        <th>&nbsp;</th>
+        <th>KINO AI</th>
+        <th data-lang="es">Alexa / Siri / Cortana</th>
+        <th data-lang="en" style="display:none">Alexa / Siri / Cortana</th>
+      </tr></thead>
       <tbody>
-        <tr>
-          <td data-lang="es">Tus conversaciones</td>
-          <td data-lang="en" style="display:none">Your conversations</td>
-          <td class="cmp-yes" data-lang="es">No se guardan en servidores propios</td>
-          <td class="cmp-yes" data-lang="en" style="display:none">Not stored on our servers</td>
-          <td data-lang="es">Pueden almacenarse para entrenamiento</td>
-          <td data-lang="en" style="display:none">May be stored for training</td>
-        </tr>
-        <tr>
-          <td data-lang="es">Motor de IA</td>
-          <td data-lang="en" style="display:none">AI engine</td>
-          <td class="cmp-yes" data-lang="es">Elegís el modelo (Gemini, etc.)</td>
-          <td class="cmp-yes" data-lang="en" style="display:none">You choose the model (Gemini, etc.)</td>
-          <td data-lang="es">Fijo, definido por el fabricante</td>
-          <td data-lang="en" style="display:none">Fixed, set by the manufacturer</td>
-        </tr>
-        <tr>
-          <td data-lang="es">Personalización</td>
-          <td data-lang="en" style="display:none">Customization</td>
-          <td class="cmp-yes" data-lang="es">Código abierto y editable</td>
-          <td class="cmp-yes" data-lang="en" style="display:none">Open and editable code</td>
-          <td class="cmp-no" data-lang="es">Cerrado</td>
-          <td class="cmp-no" data-lang="en" style="display:none">Closed</td>
-        </tr>
-        <tr>
-          <td data-lang="es">Hardware adicional</td>
-          <td data-lang="en" style="display:none">Extra hardware</td>
-          <td class="cmp-yes" data-lang="es">No, usa tu PC</td>
-          <td class="cmp-yes" data-lang="en" style="display:none">No, uses your PC</td>
-          <td data-lang="es">A veces requiere dispositivo</td>
-          <td data-lang="en" style="display:none">Sometimes requires a device</td>
-        </tr>
-        <tr>
-          <td data-lang="es">Consumo de recursos</td>
-          <td data-lang="en" style="display:none">Resource usage</td>
-          <td class="cmp-yes" data-lang="es">Menos de 200 MB de RAM</td>
-          <td class="cmp-yes" data-lang="en" style="display:none">Under 200 MB RAM</td>
-          <td data-lang="es">Dispositivo dedicado funcionando 24/7</td>
-          <td data-lang="en" style="display:none">Dedicated device running 24/7</td>
-        </tr>
+        <tr><td data-lang="es">Tus conversaciones</td><td data-lang="en" style="display:none">Your conversations</td><td data-lang="es">No se guardan en ningún servidor</td><td data-lang="en" style="display:none">Not stored on any server</td><td data-lang="es">Pueden almacenarse para entrenamiento</td><td data-lang="en" style="display:none">May be stored for training</td></tr>
+        <tr><td data-lang="es">Motor de IA</td><td data-lang="en" style="display:none">AI engine</td><td data-lang="es">Elegís el modelo (Gemini, etc.)</td><td data-lang="en" style="display:none">You choose the model (Gemini, etc.)</td><td data-lang="es">Fijo, definido por el fabricante</td><td data-lang="en" style="display:none">Fixed, defined by manufacturer</td></tr>
+        <tr><td data-lang="es">Personalización</td><td data-lang="en" style="display:none">Customization</td><td data-lang="es">Código abierto y editable</td><td data-lang="en" style="display:none">Open source and editable</td><td data-lang="es">Cerrado</td><td data-lang="en" style="display:none">Closed</td></tr>
+        <tr><td data-lang="es">Hardware adicional</td><td data-lang="en" style="display:none">Extra hardware</td><td data-lang="es">No, usa tu PC</td><td data-lang="en" style="display:none">No, uses your PC</td><td data-lang="es">A veces requiere dispositivo</td><td data-lang="en" style="display:none">Sometimes requires device</td></tr>
+        <tr><td data-lang="es">Consumo</td><td data-lang="en" style="display:none">Resource use</td><td data-lang="es">Menos de 200 MB de RAM</td><td data-lang="en" style="display:none">Under 200 MB RAM</td><td data-lang="es">Dispositivo dedicado 24/7</td><td data-lang="en" style="display:none">Dedicated device 24/7</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
 <!-- REQUIREMENTS -->
-<section class="section roll-section" id="requisitos" style="padding-top: 0;">
-  <p class="section-label" data-lang="es">Requisitos</p>
-  <p class="section-label" data-lang="en" style="display:none">Requirements</p>
-  <h2 class="section-title" data-lang="es">¿Qué necesitás para usarlo?</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">What do you need to use it?</h2>
-  <p class="section-sub" data-lang="es">KINO corre en casi cualquier PC con Windows moderno.</p>
-  <p class="section-sub" data-lang="en" style="display:none">KINO runs on almost any modern Windows PC.</p>
-
-  <div class="req-grid">
-    <div class="req-item">
-      <div class="req-dot"></div>
-      <div>
-        <div class="req-label">OS</div>
-        <div class="req-val">Windows 10 / 11</div>
-      </div>
-    </div>
-    <div class="req-item">
-      <div class="req-dot"></div>
-      <div>
-        <div class="req-label">RAM</div>
-        <div class="req-val">4 GB mínimo</div>
-      </div>
-    </div>
-    <div class="req-item">
-      <div class="req-dot"></div>
-      <div>
-        <div class="req-label">Disco</div>
-        <div class="req-val">~300 MB</div>
-      </div>
-    </div>
-    <div class="req-item">
-      <div class="req-dot"></div>
-      <div>
-        <div class="req-label">API Key</div>
-        <div class="req-val">
-          <span data-lang="es">Gemini o OpenRouter</span>
-          <span data-lang="en">Gemini or OpenRouter</span>
-        </div>
-      </div>
-    </div>
-    <div class="req-item">
-      <div class="req-dot"></div>
-      <div>
-        <div class="req-label">Internet</div>
-        <div class="req-val">
-          <span data-lang="es">Requerido</span>
-          <span data-lang="en">Required</span>
-        </div>
-      </div>
-    </div>
-    <div class="req-item">
-      <div class="req-dot"></div>
-      <div>
-        <div class="req-label">Edad</div>
-        <div class="req-val">18+</div>
-      </div>
+<section id="requisitos">
+  <div class="req-section">
+    <p class="section-label" data-lang="es">Requisitos</p>
+    <p class="section-label" data-lang="en" style="display:none">Requirements</p>
+    <h2 class="section-h2">
+      <span data-lang="es">¿Qué necesitás para usar KINO?</span>
+      <span data-lang="en" style="display:none">What do you need to use KINO?</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="es">KINO corre en casi cualquier PC con Windows moderno.</span>
+      <span data-lang="en" style="display:none">KINO runs on almost any modern Windows PC.</span>
+    </p>
+    <div class="req-grid">
+      <div class="req-card"><div class="req-label">OS</div><div class="req-val">Windows 10 / 11</div></div>
+      <div class="req-card"><div class="req-label">RAM</div><div class="req-val">4 GB mínimo</div></div>
+      <div class="req-card"><div class="req-label">Almacenamiento</div><div class="req-val">~300 MB libres</div></div>
+      <div class="req-card"><div class="req-label">Micrófono</div><div class="req-val" data-lang="es">Requerido</div><div class="req-val" data-lang="en" style="display:none">Required</div></div>
+      <div class="req-card"><div class="req-label">API Key</div><div class="req-val"><span data-lang="es">Gemini o OpenRouter</span><span data-lang="en" style="display:none">Gemini or OpenRouter</span></div></div>
+      <div class="req-card"><div class="req-label">Internet</div><div class="req-val" data-lang="es">Solo para las requests</div><div class="req-val" data-lang="en" style="display:none">Only for requests</div></div>
     </div>
   </div>
 </section>
 
-<!-- PRIMEROS PASOS -->
-<section class="section roll-section" id="primeros-pasos">
-  <p class="section-label" data-lang="es">Guía rápida</p>
-  <p class="section-label" data-lang="en" style="display:none">Quick guide</p>
-  <h2 class="section-title" data-lang="es">Primeros pasos</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">Getting started</h2>
-  <p class="section-sub" data-lang="es">En pocos minutos vas a tener a KINO funcionando en tu PC. Por ahora el instalador de un clic es solo para Windows.</p>
-  <p class="section-sub" data-lang="en" style="display:none">In a few minutes you'll have KINO running on your PC. The one-click installer is currently Windows only.</p>
-
-  <div class="steps-grid">
-    <div class="step-item">
-      <div class="step-num">1</div>
-      <div>
-        <div class="step-title" data-lang="es">Descargá el instalador</div>
-        <div class="step-title" data-lang="en" style="display:none">Download the installer</div>
-        <div class="step-desc" data-lang="es">Hacé clic en "Descargar KINO AI gratis" más abajo y completá el formulario para recibir el link.</div>
-        <div class="step-desc" data-lang="en" style="display:none">Click "Download KINO AI free" below and fill out the form to receive the link.</div>
-      </div>
+<!-- GETTING STARTED -->
+<section id="primeros-pasos">
+  <div class="steps-section">
+    <p class="section-label" data-lang="es">Guía rápida · Primeros pasos</p>
+    <p class="section-label" data-lang="en" style="display:none">Quick guide · Getting started</p>
+    <h2 class="section-h2">
+      <span data-lang="es">Arrancá en minutos</span>
+      <span data-lang="en" style="display:none">Up and running in minutes</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="es">En pocos minutos vas a tener a KINO funcionando en tu PC. Por ahora el instalador de un clic es solo para Windows.</span>
+      <span data-lang="en" style="display:none">In a few minutes you'll have KINO running on your PC. The one-click installer is currently Windows only.</span>
+    </p>
+    <div class="steps-list">
+      <div class="step-row"><div class="step-num">1</div><div><div class="step-title" data-lang="es">Descargá el instalador</div><div class="step-title" data-lang="en" style="display:none">Download the installer</div><div class="step-desc" data-lang="es">Hacé clic en "Descargar KINO AI gratis" más abajo y completá el formulario para recibir el link.</div><div class="step-desc" data-lang="en" style="display:none">Click "Download KINO AI free" below and fill out the form to receive the link.</div></div></div>
+      <div class="step-row"><div class="step-num">2</div><div><div class="step-title" data-lang="es">Ejecutá KINO_Setup.exe</div><div class="step-title" data-lang="en" style="display:none">Run KINO_Setup.exe</div><div class="step-desc" data-lang="es">Si Windows muestra SmartScreen, hacé clic en "Más información" → "Ejecutar de todas formas". Es normal para apps sin firma paga.</div><div class="step-desc" data-lang="en" style="display:none">If Windows shows SmartScreen, click "More info" → "Run anyway". Normal for apps without paid signing.</div></div></div>
+      <div class="step-row"><div class="step-num">3</div><div><div class="step-title" data-lang="es">Conseguí tu API key de Gemini</div><div class="step-title" data-lang="en" style="display:none">Get your Gemini API key</div><div class="step-desc" data-lang="es">Entrá a <a href="https://ai.google.dev" target="_blank">ai.google.dev</a> con tu cuenta de Google y generá una key gratis.</div><div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://ai.google.dev" target="_blank">ai.google.dev</a> with your Google account and generate a free key.</div></div></div>
+      <div class="step-row"><div class="step-num">4</div><div><div class="step-title" data-lang="es">Conseguí tu API key de OpenRouter</div><div class="step-title" data-lang="en" style="display:none">Get your OpenRouter API key</div><div class="step-desc" data-lang="es">Entrá a <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, creá una cuenta gratis y generá tu key.</div><div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, create a free account and generate your key.</div></div></div>
+      <div class="step-row"><div class="step-num">5</div><div><div class="step-title" data-lang="es">Pegá tus keys y listo</div><div class="step-title" data-lang="en" style="display:none">Paste your keys and go</div><div class="step-desc" data-lang="es">Al abrir KINO, pegá ambas keys, elegí tu sistema operativo y hacé clic en "Initialise Systems". ¡Ya podés hablarle!</div><div class="step-desc" data-lang="en" style="display:none">When KINO opens, paste both keys, choose your OS and click "Initialise Systems". You can start talking!</div></div></div>
     </div>
+  </div>
+</section>
 
-    <div class="step-item">
-      <div class="step-num">2</div>
+<!-- CTA -->
+<section id="descargar">
+  <div class="cta-section">
+    <h2 class="cta-h2">
+      <span data-lang="es">Tu IA personal,<br><span class="accent">gratis y sin límites</span></span>
+      <span data-lang="en" style="display:none">Your personal AI,<br><span class="accent">free and unlimited</span></span>
+    </h2>
+    <p class="cta-sub" data-lang="es">Sin suscripciones. Sin servidores propios. Sin datos que se van a ningún lado.</p>
+    <p class="cta-sub" data-lang="en" style="display:none">No subscriptions. No proprietary servers. No data going anywhere.</p>
+    <button class="btn-glow" onclick="openDownloadModal()" style="font-size:1.1rem;padding:1.1rem 2.8rem;">
+      <span data-lang="es">↓ Descargar KINO gratis</span>
+      <span data-lang="en" style="display:none">↓ Download KINO free</span>
+    </button>
+    <p style="margin-top:1rem;font-size:0.8rem;color:rgba(255,255,255,0.25);">
+      <span data-lang="es">Solo Windows · v3.3 · 100% gratis · Sin suscripción · Sin tarjeta de crédito</span>
+      <span data-lang="en" style="display:none">Windows only · v3.3 · 100% free · No subscription · No credit card</span>
+    </p>
+    <div style="margin-top:2.5rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;font-size:0.85rem;color:rgba(255,255,255,0.35);">
       <div>
-        <div class="step-title" data-lang="es">Ejecutá KINO_Setup.exe</div>
-        <div class="step-title" data-lang="en" style="display:none">Run KINO_Setup.exe</div>
-        <div class="step-desc" data-lang="es">Si Windows muestra una advertencia de SmartScreen, hacé clic en "Más información" y luego en "Ejecutar de todas formas". Es normal en instaladores sin firma paga.</div>
-        <div class="step-desc" data-lang="en" style="display:none">If Windows shows a SmartScreen warning, click "More info" and then "Run anyway". This is normal for installers without a paid signature.</div>
+        <p data-lang="es" style="margin-bottom:0.5rem;">¿KINO te resultó útil? <a href="https://ko-fi.com/kinoaisystems" target="_blank" style="color:#6c63ff;">☕ Apoyar el proyecto</a></p>
+        <p data-lang="en" style="display:none;margin-bottom:0.5rem;">Found KINO useful? <a href="https://ko-fi.com/kinoaisystems" target="_blank" style="color:#6c63ff;">☕ Support the project</a></p>
       </div>
-    </div>
-
-    <div class="step-item">
-      <div class="step-num">3</div>
       <div>
-        <div class="step-title" data-lang="es">Conseguí tu Gemini API key</div>
-        <div class="step-title" data-lang="en" style="display:none">Get your Gemini API key</div>
-        <div class="step-desc" data-lang="es">Entrá a <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">ai.google.dev</a> con tu cuenta de Google y generá una key gratis. KINO la usa para entender y responder.</div>
-        <div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">ai.google.dev</a> with your Google account and generate a free key. KINO uses it to understand and respond.</div>
-      </div>
-    </div>
-
-    <div class="step-item">
-      <div class="step-num">4</div>
-      <div>
-        <div class="step-title" data-lang="es">Conseguí tu OpenRouter API key</div>
-        <div class="step-title" data-lang="en" style="display:none">Get your OpenRouter API key</div>
-        <div class="step-desc" data-lang="es">Entrá a <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, creá una cuenta gratis y generá tu key. Se usa como respaldo y para tareas adicionales.</div>
-        <div class="step-desc" data-lang="en" style="display:none">Go to <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>, create a free account and generate your key. It's used as a backup and for extra tasks.</div>
-      </div>
-    </div>
-
-    <div class="step-item">
-      <div class="step-num">5</div>
-      <div>
-        <div class="step-title" data-lang="es">Pegá tus keys y listo</div>
-        <div class="step-title" data-lang="en" style="display:none">Paste your keys and you're set</div>
-        <div class="step-desc" data-lang="es">Al abrir KINO por primera vez, pegá ambas keys, elegí tu sistema operativo y hacé clic en "Initialise Systems". ¡Ya podés empezar a hablarle!</div>
-        <div class="step-desc" data-lang="en" style="display:none">When you open KINO for the first time, paste both keys, pick your operating system and click "Initialise Systems". You're ready to start talking to it!</div>
+        <p data-lang="es" style="margin-bottom:0.5rem;">¿Te gustó? Compartilo:
+          <a href="https://wa.me/?text=Probá KINO AI, un asistente de IA personal gratuito para Windows https://kinoaisystems.github.io/kino-ai/" target="_blank" style="color:#4fc3f7;">WhatsApp</a> ·
+          <a href="https://twitter.com/intent/tweet?text=Probá KINO AI, un asistente de IA personal gratuito para Windows&url=https://kinoaisystems.github.io/kino-ai/" target="_blank" style="color:#4fc3f7;">X / Twitter</a>
+        </p>
+        <p data-lang="en" style="display:none;margin-bottom:0.5rem;">Like KINO? Share it:
+          <a href="https://wa.me/?text=Try KINO AI, a free personal AI assistant for Windows https://kinoaisystems.github.io/kino-ai/" target="_blank" style="color:#4fc3f7;">WhatsApp</a> ·
+          <a href="https://twitter.com/intent/tweet?text=Try KINO AI, a free personal AI assistant for Windows&url=https://kinoaisystems.github.io/kino-ai/" target="_blank" style="color:#4fc3f7;">X / Twitter</a>
+        </p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="section roll-section" id="faq">
-  <p class="section-label" data-lang="es">Ayuda</p>
-  <p class="section-label" data-lang="en" style="display:none">Help</p>
-  <h2 class="section-title" data-lang="es">Preguntas frecuentes</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">Frequently asked questions</h2>
-  <p class="section-sub" data-lang="es">Lo que más nos preguntan sobre KINO.</p>
-  <p class="section-sub" data-lang="en" style="display:none">What people ask us most about KINO.</p>
+<section id="faq">
+  <div class="faq-section">
+    <p class="section-label" data-lang="es">Preguntas frecuentes</p>
+    <p class="section-label" data-lang="en" style="display:none">Frequently asked questions</p>
+    <h2 class="section-h2">
+      <span data-lang="es">Lo que más nos preguntan sobre KINO.</span>
+      <span data-lang="en" style="display:none">What people ask us most about KINO.</span>
+    </h2>
+    <div class="faq-list">
+      <details class="faq-item"><summary data-lang="es">¿KINO es realmente gratis?</summary><summary data-lang="en" style="display:none">Is KINO really free?</summary><div class="faq-answer"><span data-lang="es">Sí, KINO en sí es 100% gratis, sin suscripciones ni tarjetas de crédito. Necesitás tus propias API keys de Gemini y OpenRouter, ambas con planes gratuitos generosos que cubren un uso normal.</span><span data-lang="en" style="display:none">Yes, KINO itself is 100% free, with no subscriptions or credit cards. You'll need your own Gemini and OpenRouter API keys, both with generous free tiers that cover normal usage.</span></div></details>
+      <details class="faq-item"><summary data-lang="es">¿Mis conversaciones se guardan en algún servidor?</summary><summary data-lang="en" style="display:none">Are my conversations stored on any server?</summary><div class="faq-answer"><span data-lang="es">No. KINO Systems no tiene servidores propios ni almacena tus conversaciones. Todo queda guardado localmente en tu computadora. Las únicas conexiones externas son las que hace KINO directamente con Gemini y OpenRouter usando tus propias keys.</span><span data-lang="en" style="display:none">No. KINO Systems doesn't have its own servers and doesn't store your conversations. Everything stays saved locally on your computer. The only external connections are the ones KINO makes directly with Gemini and OpenRouter using your own keys.</span></div></details>
+      <details class="faq-item"><summary data-lang="es">Windows me muestra una advertencia al instalar, ¿es seguro?</summary><summary data-lang="en" style="display:none">Windows shows a warning when installing, is it safe?</summary><div class="faq-answer"><span data-lang="es">Sí. Esa advertencia (SmartScreen) aparece porque KINO es una app nueva sin firma digital paga, no porque tenga algo malicioso. Hacé clic en "Más información" y luego en "Ejecutar de todas formas".</span><span data-lang="en" style="display:none">Yes. That warning (SmartScreen) appears because KINO is a new app without a paid digital signature, not because it's malicious. Click "More info" and then "Run anyway".</span></div></details>
+      <details class="faq-item"><summary data-lang="es">¿Funciona sin internet?</summary><summary data-lang="en" style="display:none">Does it work offline?</summary><div class="faq-answer"><span data-lang="es">KINO necesita internet solo para enviar las requests a Gemini o OpenRouter y recibir respuestas. El programa en sí carga sin internet, pero para que KINO te responda necesita conexión activa.</span><span data-lang="en" style="display:none">KINO needs internet only to send requests to Gemini or OpenRouter and receive responses. The program itself loads without internet, but for KINO to respond it needs an active connection.</span></div></details>
 
-  <div class="faq-list">
-    <details class="faq-item">
-      <summary data-lang="es">Windows me muestra una advertencia al instalar, ¿es seguro?</summary>
-      <summary data-lang="en" style="display:none">Windows shows a warning when installing, is it safe?</summary>
-      <div class="faq-answer">
-        <span data-lang="es">Sí. Esa advertencia (SmartScreen) aparece porque KINO es una app nueva sin firma digital paga, no porque tenga algo malicioso. Hacé clic en "Más información" y luego en "Ejecutar de todas formas" para continuar con la instalación.</span>
-        <span data-lang="en">Yes. That warning (SmartScreen) appears because KINO is a new app without a paid digital signature, not because it's malicious. Click "More info" and then "Run anyway" to continue with the installation.</span>
-      </div>
-    </details>
-
-    <details class="faq-item">
-      <summary data-lang="es">¿KINO es realmente gratis?</summary>
-      <summary data-lang="en" style="display:none">Is KINO really free?</summary>
-      <div class="faq-answer">
-        <span data-lang="es">Sí, KINO en sí es 100% gratis, sin suscripciones ni tarjetas de crédito. Necesitás tus propias API keys de Gemini y OpenRouter, ambas con planes gratuitos generosos que cubren un uso normal.</span>
-        <span data-lang="en">Yes, KINO itself is 100% free, with no subscriptions or credit cards. You'll need your own Gemini and OpenRouter API keys, both with generous free tiers that cover normal usage.</span>
-      </div>
-    </details>
-
-    <details class="faq-item">
-      <summary data-lang="es">¿Mis conversaciones o datos se guardan en algún servidor?</summary>
-      <summary data-lang="en" style="display:none">Are my conversations or data stored on any server?</summary>
-      <div class="faq-answer">
-        <span data-lang="es">No. KINO Systems no tiene servidores propios ni almacena tus conversaciones. Todo queda guardado localmente en tu computadora. Las únicas conexiones externas son las que hace KINO directamente con Gemini y OpenRouter usando tus propias keys.</span>
-        <span data-lang="en">No. KINO Systems doesn't have its own servers and doesn't store your conversations. Everything stays saved locally on your computer. The only external connections are the ones KINO makes directly with Gemini and OpenRouter using your own keys.</span>
-      </div>
-    </details>
-
-    <details class="faq-item">
-      <summary data-lang="es">¿Funciona en Mac o Linux?</summary>
-      <summary data-lang="en" style="display:none">Does it work on Mac or Linux?</summary>
-      <div class="faq-answer">
-        <span data-lang="es">El instalador de un clic (.exe) es por ahora solo para Windows. KINO está hecho en Python y es multiplataforma, así que en Mac o Linux se puede correr desde el código fuente, aunque requiere algo más de conocimiento técnico (instalar Python y dependencias).</span>
-        <span data-lang="en">The one-click installer (.exe) is currently Windows only. KINO is built in Python and is cross-platform, so on Mac or Linux it can be run from source code, though it requires a bit more technical knowledge (installing Python and dependencies).</span>
-      </div>
-    </details>
-
-    <details class="faq-item">
-      <summary data-lang="es">Encontré un error o algo no funciona, ¿qué hago?</summary>
-      <summary data-lang="en" style="display:none">I found a bug or something isn't working, what do I do?</summary>
-      <div class="faq-answer">
-        <span data-lang="es">Dentro de la app, abajo a la derecha, hay un botón "Reportar problema" que abre un correo prellenado con los datos necesarios para ayudarte más rápido. También podés escribirnos directamente a <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a>.</span>
-        <span data-lang="en">Inside the app, in the bottom right, there's a "Report issue" button that opens a pre-filled email with the info needed to help you faster. You can also write to us directly at <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a>.</span>
-      </div>
-    </details>
-
-    <details class="faq-item">
-      <summary data-lang="es">¿Cómo cambio mis API keys?</summary>
-      <summary data-lang="en" style="display:none">How do I change my API keys?</summary>
-      <div class="faq-answer">
-        <span data-lang="es">Dentro de la app, abajo, hay un link "Cerrar sesión" que borra tus keys guardadas y te lleva de nuevo a la pantalla de configuración. Después de ingresar las nuevas keys, reiniciá KINO para que tomen efecto.</span>
-        <span data-lang="en">Inside the app, at the bottom, there's a "Cerrar sesión" link that clears your saved keys and takes you back to the setup screen. After entering the new keys, restart KINO for them to take effect.</span>
-      </div>
-    </details>
+      <details class="faq-item"><summary data-lang="es">¿Funciona en Mac o Linux?</summary><summary data-lang="en" style="display:none">Does it work on Mac or Linux?</summary><div class="faq-answer"><span data-lang="es">El instalador de un clic (.exe) es por ahora solo para Windows. KINO está hecho en Python y es multiplataforma, así que en el futuro podría llegar a otras plataformas. Por ahora el foco es Windows.</span><span data-lang="en" style="display:none">The one-click installer (.exe) is currently Windows only. KINO is built in Python and is cross-platform, so it could come to other platforms in the future. For now the focus is Windows.</span></div></details>
+      <details class="faq-item"><summary data-lang="es">Encontré un error o algo no funciona, ¿qué hago?</summary><summary data-lang="en" style="display:none">I found a bug or something isn't working, what do I do?</summary><div class="faq-answer"><span data-lang="es">Dentro de la app, abajo a la derecha, hay un botón "Reportar problema" que abre un correo prellenado con los datos necesarios. También podés escribirnos directamente a <a href="mailto:kinoaisystems@gmail.com" style="color:#4fc3f7">kinoaisystems@gmail.com</a>.</span><span data-lang="en" style="display:none">Inside the app, in the bottom right, there's a "Report issue" button that opens a pre-filled email with the info needed. You can also write directly to <a href="mailto:kinoaisystems@gmail.com" style="color:#4fc3f7">kinoaisystems@gmail.com</a>.</span></div></details>
+      <details class="faq-item"><summary data-lang="es">¿Cómo cambio mis API keys?</summary><summary data-lang="en" style="display:none">How do I change my API keys?</summary><div class="faq-answer"><span data-lang="es">Dentro de la app, abajo, hay un link "Cerrar sesión" que borra tus keys guardadas y te lleva de nuevo a la pantalla de configuración.</span><span data-lang="en" style="display:none">Inside the app, at the bottom, there's a "Cerrar sesión" link that clears your saved keys and takes you back to the setup screen.</span></div></details>
+    </div>
   </div>
 </section>
 
 <!-- CHANGELOG -->
-<section class="section roll-section" id="changelog">
-  <p class="section-label" data-lang="es">Historial</p>
-  <p class="section-label" data-lang="en" style="display:none">History</p>
-  <h2 class="section-title" data-lang="es">Novedades</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">What's new</h2>
-  <p class="section-sub" data-lang="es">Los últimos cambios y mejoras de KINO AI.</p>
-  <p class="section-sub" data-lang="en" style="display:none">The latest changes and improvements to KINO AI.</p>
-
-  <div class="changelog-list">
-    <div class="changelog-item">
-      <div class="changelog-head">
-        <span class="changelog-version">v3.3</span>
-        <span class="changelog-date" data-lang="es">Junio 2026</span>
-        <span class="changelog-date" data-lang="en" style="display:none">June 2026</span>
-      </div>
-      <ul data-lang="es">
-        <li>Nuevo diseño de conversación: el chat ahora ocupa el centro de la pantalla, con burbujas redondeadas y más fáciles de leer.</li>
-        <li>Análisis de archivos Excel, Word y PDF: pedile a KINO que extraiga datos, calcule promedios o genere gráficos.</li>
-        <li>Exportación a Google Sheets y Google Drive directamente desde la conversación.</li>
-        <li>Generación de gráficos (líneas, barras, área) a partir de tus propios datos.</li>
-        <li>Apertura de sitios de Google (Docs, Sheets, Gmail) usando tu sesión real, sin ventanas en incógnito.</li>
-        <li>Scroll más fluido en toda la app, con transiciones suaves entre pantallas.</li>
-      </ul>
-      <ul data-lang="en" style="display:none">
-        <li>New conversation design: chat now takes center stage, with rounder, easier-to-read bubbles.</li>
-        <li>Excel, Word and PDF analysis: ask KINO to extract data, calculate averages, or generate charts.</li>
-        <li>Export to Google Sheets and Google Drive directly from the conversation.</li>
-        <li>Chart generation (line, bar, area) from your own data.</li>
-        <li>Opens Google sites (Docs, Sheets, Gmail) using your real session, no incognito windows.</li>
-        <li>Smoother scrolling throughout the app, with fluid transitions between screens.</li>
-      </ul>
-    </div>
-    <div class="changelog-item">
-      <div class="changelog-head">
-        <span class="changelog-version">v3.2</span>
-        <span class="changelog-date" data-lang="es">Junio 2026</span>
-        <span class="changelog-date" data-lang="en" style="display:none">June 2026</span>
-      </div>
-      <ul data-lang="es">
-        <li>Nuevo diseño más sobrio, con controles más compactos.</li>
-        <li>Validación automática de tu Gemini API key al configurar KINO.</li>
-        <li>Botón "Reportar problema" que incluye el registro de actividad para ayudarte más rápido.</li>
-        <li>Link directo a "Cómo usar KINO" desde la app.</li>
-        <li>Nueva opción "Cerrar sesión" para cambiar tus API keys sin reinstalar.</li>
-        <li>Corrección de un error que podía dejar a KINO trabado "pensando" al hablarle.</li>
-        <li>Corrección de un error de audio que afectaba a algunas configuraciones de sonido.</li>
-      </ul>
-      <ul data-lang="en" style="display:none">
-        <li>New, more understated design with more compact controls.</li>
-        <li>Automatic validation of your Gemini API key during setup.</li>
-        <li>"Report issue" button that includes the activity log to help you faster.</li>
-        <li>Direct link to "How to use KINO" from the app.</li>
-        <li>New "Log out" option to change your API keys without reinstalling.</li>
-        <li>Fixed an issue that could leave KINO stuck "thinking" when spoken to.</li>
-        <li>Fixed an audio error affecting some sound configurations.</li>
-      </ul>
+<section id="changelog">
+  <div class="changelog-section">
+    <p class="section-label" data-lang="es">Novedades</p>
+    <p class="section-label" data-lang="en" style="display:none">Changelog</p>
+    <h2 class="section-h2">
+      <span data-lang="es">Versiones</span>
+      <span data-lang="en" style="display:none">Versions</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="es">Los últimos cambios y mejoras de KINO AI.</span>
+      <span data-lang="en" style="display:none">The latest changes and improvements to KINO AI.</span>
+    </p>
+    <div class="changelog-list">
+      <div class="changelog-entry"><div class="changelog-head"><span class="changelog-version">v3.3</span><span class="changelog-date" data-lang="es">Junio 2026</span><span class="changelog-date" data-lang="en" style="display:none">June 2026</span></div><ul class="changelog-items">
+        <li data-lang="es">Nuevo diseño de conversación: el chat ahora ocupa el centro de la pantalla, con burbujas redondeadas y más fáciles de leer.</li>
+        <li data-lang="en" style="display:none">New conversation design: chat now takes center stage, with rounder, easier-to-read bubbles.</li>
+        <li data-lang="es">Análisis de archivos Excel, Word y PDF: pedile a KINO que extraiga datos, calcule promedios o genere gráficos.</li>
+        <li data-lang="en" style="display:none">Excel, Word and PDF analysis: ask KINO to extract data, calculate averages, or generate charts.</li>
+        <li data-lang="es">Exportación a Google Sheets y Google Drive directamente desde la conversación.</li>
+        <li data-lang="en" style="display:none">Export to Google Sheets and Google Drive directly from the conversation.</li>
+        <li data-lang="es">Generación de gráficos (líneas, barras, área) a partir de tus propios datos.</li>
+        <li data-lang="en" style="display:none">Chart generation (line, bar, area) from your own data.</li>
+        <li data-lang="es">Apertura de sitios de Google (Docs, Sheets, Gmail) usando tu sesión real, sin ventanas en incógnito.</li>
+        <li data-lang="en" style="display:none">Opens Google sites (Docs, Sheets, Gmail) using your real session, no incognito windows.</li>
+        <li data-lang="es">Scroll más fluido en toda la app, con transiciones suaves entre pantallas.</li>
+        <li data-lang="en" style="display:none">Smoother scrolling throughout the app, with fluid transitions between screens.</li>
+      </ul></div>
+      <div class="changelog-entry"><div class="changelog-head"><span class="changelog-version">v3.2</span><span class="changelog-date" data-lang="es">Junio 2026</span><span class="changelog-date" data-lang="en" style="display:none">June 2026</span></div><ul class="changelog-items">
+        <li data-lang="es">Nuevo diseño más sobrio, con controles más compactos.</li>
+        <li data-lang="en" style="display:none">New, more understated design with more compact controls.</li>
+        <li data-lang="es">Validación automática de tu Gemini API key al configurar KINO.</li>
+        <li data-lang="en" style="display:none">Automatic validation of your Gemini API key during setup.</li>
+        <li data-lang="es">Botón "Reportar problema" que incluye el registro de actividad para ayudarte más rápido.</li>
+        <li data-lang="en" style="display:none">"Report issue" button that includes the activity log to help you faster.</li>
+        <li data-lang="es">Link directo a "Cómo usar KINO" desde la app.</li>
+        <li data-lang="en" style="display:none">Direct link to "How to use KINO" from the app.</li>
+        <li data-lang="es">Nueva opción "Cerrar sesión" para cambiar tus API keys sin reinstalar.</li>
+        <li data-lang="en" style="display:none">New "Log out" option to change your API keys without reinstalling.</li>
+        <li data-lang="es">Corrección de un error que podía dejar a KINO trabado "pensando" al hablarle.</li>
+        <li data-lang="en" style="display:none">Fixed an issue that could leave KINO stuck "thinking" when spoken to.</li>
+        <li data-lang="es">Corrección de un error de audio que afectaba a algunas configuraciones de sonido.</li>
+        <li data-lang="en" style="display:none">Fixed an audio error affecting some sound configurations.</li>
+      </ul></div>
     </div>
   </div>
 </section>
 
-<!-- NOTIFICACIONES -->
-<section class="section roll-section" id="notificaciones">
-  <p class="section-label" data-lang="es">Mantenete al día</p>
-  <p class="section-label" data-lang="en" style="display:none">Stay in the loop</p>
-  <h2 class="section-title" data-lang="es">Recibí novedades de KINO</h2>
-  <h2 class="section-title" data-lang="en" style="display:none">Get KINO updates</h2>
-  <p class="section-sub" data-lang="es">Dejá tu email y te avisamos cuando salgan nuevas versiones.</p>
-  <p class="section-sub" data-lang="en" style="display:none">Leave your email and we'll notify you when new versions drop.</p>
-
-  <div style="max-width:420px; margin:0 auto;" id="newsletter-form">
-    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-      <input id="nl-email" type="email" placeholder="tu@email.com" style="
-        flex:1; min-width:200px; padding:12px 16px; background:#1a1a2e;
-        border:1px solid #2a2a3a; border-radius:10px;
-        color:#f0f0f8; font-size:0.95rem; outline:none;
-      ">
-      <button onclick="submitNewsletter()" style="
-        padding:12px 22px; background:#6c63ff; border:none;
-        border-radius:10px; color:#fff; font-weight:700; cursor:pointer;
-      ">
+<!-- NEWSLETTER -->
+<section>
+  <div class="newsletter-section">
+    <p class="section-label" data-lang="es">Mantenete al día</p>
+    <p class="section-label" data-lang="en" style="display:none">Stay in the loop</p>
+    <h2 class="section-h2" style="font-size:1.8rem">
+      <span data-lang="es">Recibí novedades de KINO</span>
+      <span data-lang="en" style="display:none">Get KINO updates</span>
+    </h2>
+    <p class="section-sub">
+      <span data-lang="es">Dejá tu email y te avisamos cuando salgan nuevas versiones.</span>
+      <span data-lang="en" style="display:none">Leave your email and we'll notify you when new versions drop.</span>
+    </p>
+    <div class="nl-form">
+      <input class="nl-input" id="nl-email" type="email" placeholder="tu@email.com">
+      <button class="nl-btn" onclick="submitNewsletter()">
         <span data-lang="es">Suscribirme</span>
-        <span data-lang="en">Subscribe</span>
+        <span data-lang="en" style="display:none">Subscribe</span>
       </button>
     </div>
-    <div id="nl-msg" style="font-size:0.85rem; margin-top:12px; text-align:center; display:none;"></div>
+    <div id="nl-msg"></div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section roll-section" id="descargar">
-  <h2 data-lang="es">Listo para empezar?</h2>
-  <h2 data-lang="en" style="display:none">Ready to get started?</h2>
-  <p data-lang="es">Registrate y recibís el link de descarga gratis en tu email.</p>
-  <p data-lang="en" style="display:none">Register and receive the free download link in your email.</p>
-  <a href="https://forms.gle/Ks6Mzd7GuZ7F4mPh8" target="_blank" style="display:none">
-    <button class="btn-primary" style="font-size: 1.05rem; padding: 1rem 2.5rem;">
-      ↓ <span data-lang="es">Descargar KINO AI gratis</span><span data-lang="en">Download KINO AI free</span>
-    </button>
-  </a>
-  <button class="btn-primary" onclick="openDownloadModal()" style="font-size: 1.05rem; padding: 1rem 2.5rem;">
-    ↓ <span data-lang="es">Descargar KINO AI gratis</span><span data-lang="en">Download KINO AI free</span>
-  </button>
-  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted);" data-lang="es">
-    100% gratis · Sin suscripción · Sin tarjeta de crédito
-  </p>
-  <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--muted);" data-lang="en">
-    100% free · No subscription · No credit card
-  </p>
-
-  <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border);">
-    <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600;" data-lang="es">¿KINO te resultó útil?</p>
-    <p style="font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; font-weight: 600;" data-lang="en">Found KINO useful?</p>
-    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;" data-lang="es">Es gratis y va a seguir siéndolo. Si querés ayudar a que sigamos mejorándolo, podés invitarnos un café.</p>
-    <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;" data-lang="en">It's free and will stay that way. If you'd like to help us keep improving it, you can buy us a coffee.</p>
-    <a href="https://ko-fi.com/kinoaisystems" target="_blank">
-      <button class="btn-secondary">
-        ☕ <span data-lang="es">Apoyar el proyecto</span><span data-lang="en">Support the project</span>
-      </button>
-    </a>
-  </div>
-
-  <div style="margin-top: 2rem;">
-    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem;" data-lang="es">¿Te gustó KINO? Compartilo:</p>
-    <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 0.75rem;" data-lang="en">Like KINO? Share it:</p>
-    <div class="hero-buttons" style="margin-bottom: 0;">
-      <a href="https://wa.me/?text=Encontr%C3%A9%20KINO%20AI%2C%20un%20asistente%20de%20voz%20gratis%20para%20Windows%20que%20corre%20en%20tu%20PC%3A%20https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="es">
-        <button class="btn-secondary">WhatsApp</button>
-      </a>
-      <a href="https://wa.me/?text=Found%20KINO%20AI%2C%20a%20free%20voice%20assistant%20for%20Windows%20that%20runs%20on%20your%20PC%3A%20https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="en" style="display:none">
-        <button class="btn-secondary">WhatsApp</button>
-      </a>
-      <a href="https://twitter.com/intent/tweet?text=Encontr%C3%A9%20KINO%20AI%2C%20un%20asistente%20de%20voz%20gratis%20para%20Windows%20que%20corre%20en%20tu%20PC%3A&url=https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="es">
-        <button class="btn-secondary">X / Twitter</button>
-      </a>
-      <a href="https://twitter.com/intent/tweet?text=Found%20KINO%20AI%2C%20a%20free%20voice%20assistant%20for%20Windows%20that%20runs%20on%20your%20PC%3A&url=https%3A%2F%2Fkinoaisystems.github.io%2Fkino-ai%2F" target="_blank" data-lang="en" style="display:none">
-        <button class="btn-secondary">X / Twitter</button>
-      </a>
-    </div>
-  </div>
-</section>
-
+<!-- FOOTER -->
 <footer>
-  <p>© 2026 KINO Systems · <a href="mailto:kinoaisystems@gmail.com">kinoaisystems@gmail.com</a></p>
-  <p style="margin-top: 0.5rem;">
-    <a href="mailto:kinoaisystems@gmail.com?subject=KINO%20AI%20-%20Reporte%20de%20problema&body=Describe%20el%20problema%20aqui%3A%0A%0A%0A--- Info adicional (no borrar) ---%0APagina%3A%20kinoaisystems.github.io%2Fkino-ai" data-lang="es">⚠ Reportar un problema</a>
-    <a href="mailto:kinoaisystems@gmail.com?subject=KINO%20AI%20-%20Issue%20report&body=Describe%20the%20issue%20here%3A%0A%0A%0A--- Additional info (do not delete) ---%0APage%3A%20kinoaisystems.github.io%2Fkino-ai" data-lang="en">⚠ Report an issue</a>
-    · <a href="https://ko-fi.com/kinoaisystems" target="_blank" data-lang="es">☕ Apoyar el proyecto</a>
-    <a href="https://ko-fi.com/kinoaisystems" target="_blank" data-lang="en">☕ Support the project</a>
-  </p>
-  <p style="margin-top: 0.5rem;">
-    <span data-lang="es">No afiliado a Google, OpenRouter ni ningún otro proveedor de IA.</span>
-    <span data-lang="en">Not affiliated with Google, OpenRouter or any other AI provider.</span>
-  </p>
+  <span>© 2026 KINO AI Systems</span>
+  <span style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+    <a href="https://ko-fi.com/kinoaisystems" target="_blank" data-lang="es">☕ Apoyar el proyecto</a>
+    <a href="https://ko-fi.com/kinoaisystems" target="_blank" data-lang="en" style="display:none">☕ Support the project</a>
+    <a href="https://kinoaisystems.github.io/kino-ai/" target="_blank">kinoaisystems.github.io</a>
+  </span>
 </footer>
 
-<!-- MODAL DE DESCARGA -->
-<div id="download-modal" style="
-  display:none; position:fixed; inset:0; z-index:9999;
-  background:rgba(0,0,0,0.75); backdrop-filter:blur(6px);
-  justify-content:center; align-items:center;
-">
-  <div style="
-    background:#0f0f18; border:1px solid #2a2a3a; border-radius:20px;
-    padding:44px 40px; width:100%; max-width:440px; margin:16px;
-    box-shadow:0 24px 80px rgba(0,0,0,0.6);
-    font-family: inherit;
-  ">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
+<!-- DOWNLOAD MODAL -->
+<div id="download-modal">
+  <div class="modal-box">
+    <div class="modal-header">
       <div>
-        <div style="font-size:1.25rem; font-weight:800; color:#f0f0f8;" data-lang="es">Descargar KINO AI</div>
-        <div style="font-size:1.25rem; font-weight:800; color:#f0f0f8; display:none" data-lang="en">Download KINO AI</div>
-        <div style="font-size:0.82rem; color:#8888aa; margin-top:4px;" data-lang="es">Gratis · Solo para Windows</div>
-        <div style="font-size:0.82rem; color:#8888aa; margin-top:4px; display:none" data-lang="en">Free · Windows only</div>
+        <div class="modal-title" data-lang="es">Descargar KINO AI</div>
+        <div class="modal-title" data-lang="en" style="display:none">Download KINO AI</div>
+        <div class="modal-sub" data-lang="es">Gratis · Solo para Windows · v3.3</div>
+        <div class="modal-sub" data-lang="en" style="display:none">Free · Windows only · v3.3</div>
       </div>
-      <button onclick="closeDownloadModal()" style="
-        background:none; border:none; cursor:pointer;
-        color:#8888aa; font-size:1.4rem; line-height:1;
-        padding:4px 8px; border-radius:8px;
-      ">✕</button>
+      <button class="modal-close" onclick="closeDownloadModal()">✕</button>
     </div>
-
     <div id="dl-form">
-      <div style="margin-bottom:16px;">
-        <label style="display:block; font-size:0.82rem; color:#8888aa; margin-bottom:6px;" data-lang="es">Nombre</label>
-        <label style="display:none; font-size:0.82rem; color:#8888aa; margin-bottom:6px;" data-lang="en">Name</label>
-        <input id="dl-nombre" type="text" placeholder="Tu nombre" autocomplete="given-name" style="
-          width:100%; padding:12px 14px; background:#1a1a2e;
-          border:1px solid #2a2a3a; border-radius:10px;
-          color:#f0f0f8; font-size:0.95rem; outline:none; box-sizing:border-box;
-        ">
-      </div>
-      <div style="margin-bottom:24px;">
-        <label style="display:block; font-size:0.82rem; color:#8888aa; margin-bottom:6px;">Email</label>
-        <input id="dl-email" type="email" placeholder="tu@email.com" autocomplete="email" style="
-          width:100%; padding:12px 14px; background:#1a1a2e;
-          border:1px solid #2a2a3a; border-radius:10px;
-          color:#f0f0f8; font-size:0.95rem; outline:none; box-sizing:border-box;
-        ">
-      </div>
-      <div id="dl-msg" style="font-size:0.85rem; margin-bottom:14px; display:none;"></div>
-      <button id="dl-btn" onclick="submitDownload()" style="
-        width:100%; padding:14px; background:#6c63ff; border:none;
-        border-radius:12px; color:#fff; font-size:1rem; font-weight:700;
-        cursor:pointer; transition:opacity .2s;
-      ">
+      <label class="modal-label" data-lang="es">Nombre</label>
+      <label class="modal-label" data-lang="en" style="display:none">Name</label>
+      <input id="dl-nombre" class="modal-input" type="text" placeholder="Tu nombre" autocomplete="given-name">
+      <label class="modal-label">Email</label>
+      <input id="dl-email" class="modal-input" type="email" placeholder="tu@email.com" autocomplete="email">
+      <div id="dl-msg"></div>
+      <button id="dl-btn" class="btn-glow" style="width:100%;justify-content:center" onclick="submitDownload()">
         <span data-lang="es">↓ Descargar ahora</span>
-        <span data-lang="en">↓ Download now</span>
+        <span data-lang="en" style="display:none">↓ Download now</span>
       </button>
-      <p style="font-size:0.75rem; color:#555577; text-align:center; margin-top:14px;" data-lang="es">
-        No enviamos spam. Tu email solo se usa para avisarte de actualizaciones importantes.
-      </p>
-      <p style="font-size:0.75rem; color:#555577; text-align:center; margin-top:14px; display:none" data-lang="en">
-        No spam. Your email is only used to notify you of important updates.
-      </p>
+      <p class="modal-notice" data-lang="es">No enviamos spam. Tu email se usa solo para avisarte de actualizaciones.</p>
+      <p class="modal-notice" data-lang="en" style="display:none">No spam. Your email is used only to notify you of updates.</p>
     </div>
-
-    <div id="dl-success" style="display:none; text-align:center; padding:16px 0;">
-      <div style="font-size:2.5rem; margin-bottom:16px;">✅</div>
-      <div style="font-size:1.1rem; font-weight:700; color:#f0f0f8; margin-bottom:8px;" data-lang="es">¡Descarga iniciada!</div>
-      <div style="font-size:1.1rem; font-weight:700; color:#f0f0f8; margin-bottom:8px; display:none" data-lang="en">Download started!</div>
-      <div style="font-size:0.88rem; color:#8888aa;" data-lang="es">Si no arranca, hacé clic acá:</div>
-      <div style="font-size:0.88rem; color:#8888aa; display:none" data-lang="en">If it didn't start, click here:</div>
-      <a id="dl-fallback" href="#" style="color:#6c63ff; font-size:0.9rem; margin-top:8px; display:inline-block;">
-        <span data-lang="es">Descargar manualmente</span>
-        <span data-lang="en">Download manually</span>
-      </a>
+    <div id="dl-success">
+      <span class="ok-icon">✅</span>
+      <div class="ok-title" data-lang="es">¡Descarga iniciada!</div>
+      <div class="ok-title" data-lang="en" style="display:none">Download started!</div>
+      <div class="ok-sub" data-lang="es">Si no arranca, <a id="dl-fallback" href="#">hacé clic acá</a>.</div>
+      <div class="ok-sub" data-lang="en" style="display:none">If it didn't start, <a id="dl-fallback2" href="#">click here</a>.</div>
     </div>
   </div>
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ---- EFECTO ROLLO ----
-(function() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('unrolled');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-  document.querySelectorAll('.roll-section').forEach(el => observer.observe(el));
-})();
+'use strict';
 
+// =====================================================
+// LANG
+// =====================================================
 function setLang(lang) {
   document.body.classList.toggle('en', lang === 'en');
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.textContent === lang.toUpperCase());
   });
+  // Manejar display:none inline en elementos data-lang
   document.querySelectorAll('[data-lang]').forEach(el => {
-    if (el.tagName === 'SPAN') return;
-    el.style.display = el.dataset.lang === lang ? '' : 'none';
+    const isSpan = el.tagName === 'SPAN';
+    if (el.dataset.lang === lang) {
+      el.style.display = isSpan ? 'inline' : '';
+    } else {
+      el.style.display = 'none';
+    }
   });
 }
-
-function toggleTheme() {
-  const isLight = document.body.classList.toggle('light');
-  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
-}
-
 function toggleMobileMenu() {
   document.getElementById('mobile-menu').classList.toggle('open');
 }
+// Inicializar idioma al cargar
+setLang('es');
 
-// ---- SUPABASE ----
+// =====================================================
+// SCROLL REVEAL
+// =====================================================
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      const delay = e.target.dataset.delay || 0;
+      setTimeout(() => e.target.classList.add('vis'), delay * 80);
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(
+  '.section-label,.section-h2,.section-sub,.feat-card,.stat-card,.req-card,.step-row,.faq-item,.changelog-entry,.cta-h2,.cta-sub'
+).forEach((el, i) => {
+  el.dataset.delay = i % 6;
+  revealObs.observe(el);
+});
+
+// =====================================================
+// SUPABASE
+// =====================================================
 const SUPABASE_URL = 'https://vqlpsaacopcnzeukyhtn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbHBzYWFjb3BjbnpldWt5aHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MTk4MjcsImV4cCI6MjA5Njk5NTgyN30.1CLZdqD2NZZIf0cSRrTyEWVcZhrbR2GbhsYi7nkl1HE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 const DOWNLOAD_URL = 'https://mega.nz/file/SmZHDZBZ#wKSR5S9mZ_sNsNEj7KuIvJVwe6ZTsmEzB4OnZ88fyXY';
 
-// ---- CONTADOR DE DESCARGAS ----
 async function loadDownloadCounter() {
   try {
-    const { count, error } = await sb
-      .from('downloads')
-      .select('*', { count: 'exact', head: true })
-      .neq('nombre', 'newsletter');
-
-    if (error || count === null) return;
-
+    const { count } = await sb.from('downloads').select('*', { count:'exact', head:true }).neq('nombre','newsletter');
+    if (count === null) return;
     const wrap = document.getElementById('download-counter');
     const elEs = document.getElementById('dl-count-es');
     const elEn = document.getElementById('dl-count-en');
-    if (!wrap) return;
-
-    wrap.style.display = 'flex';
-
-    // Animacion de conteo ascendente
-    const target = count;
-    const duration = 900;
-    const start = performance.now();
+    wrap.style.display = 'block';
+    const dur = 900, start = performance.now();
     function tick(now) {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(eased * target);
-      if (elEs) elEs.textContent = current.toLocaleString('es-AR');
-      if (elEn) elEn.textContent = current.toLocaleString('en-US');
-      if (progress < 1) requestAnimationFrame(tick);
+      const p = Math.min((now - start) / dur, 1);
+      const e = 1 - Math.pow(1-p,3);
+      const v = Math.floor(e * count);
+      if (elEs) elEs.textContent = v.toLocaleString('es-AR');
+      if (elEn) elEn.textContent = v.toLocaleString('en-US');
+      if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
-  } catch (e) {
-    console.warn('No se pudo cargar el contador de descargas:', e);
-  }
+  } catch(err) { console.warn('counter:', err); }
 }
 loadDownloadCounter();
 
-// ---- MODAL DE DESCARGA ----
 function openDownloadModal() {
-  const modal = document.getElementById('download-modal');
-  modal.style.display = 'flex';
+  const m = document.getElementById('download-modal');
+  m.style.display = 'flex';
   document.getElementById('dl-form').style.display = 'block';
   document.getElementById('dl-success').style.display = 'none';
   document.getElementById('dl-msg').style.display = 'none';
@@ -1338,351 +1192,351 @@ function openDownloadModal() {
   document.getElementById('dl-email').value = '';
   document.body.style.overflow = 'hidden';
 }
-
 function closeDownloadModal() {
   document.getElementById('download-modal').style.display = 'none';
   document.body.style.overflow = '';
 }
-
 document.getElementById('download-modal').addEventListener('click', function(e) {
   if (e.target === this) closeDownloadModal();
 });
-
-async function submitNewsletter() {
-  const email = document.getElementById('nl-email').value.trim();
-  const msgEl = document.getElementById('nl-msg');
-  const lang  = document.body.classList.contains('en') ? 'en' : 'es';
-  msgEl.style.display = 'none';
-
-  if (!email || !email.includes('@')) {
-    msgEl.textContent = lang === 'es' ? 'Ingresá un email válido.' : 'Please enter a valid email.';
-    msgEl.style.color = '#ff6b6b'; msgEl.style.display = 'block'; return;
-  }
-
-  try {
-    await sb.from('downloads').insert({ nombre: 'newsletter', email });
-    msgEl.textContent = lang === 'es' ? '✅ ¡Listo! Te avisamos cuando haya novedades.' : '✅ Done! We\'ll notify you of updates.';
-    msgEl.style.color = '#6c63ff'; msgEl.style.display = 'block';
-    document.getElementById('nl-email').value = '';
-  } catch(e) {
-    msgEl.textContent = lang === 'es' ? 'Ocurrió un error. Intentá de nuevo.' : 'Something went wrong. Try again.';
-    msgEl.style.color = '#ff6b6b'; msgEl.style.display = 'block';
-  }
-}
-
 async function submitDownload() {
   const nombre = document.getElementById('dl-nombre').value.trim();
   const email  = document.getElementById('dl-email').value.trim();
   const msgEl  = document.getElementById('dl-msg');
   const btn    = document.getElementById('dl-btn');
   const lang   = document.body.classList.contains('en') ? 'en' : 'es';
-
   msgEl.style.display = 'none';
-
-  if (!nombre) {
-    msgEl.textContent = lang === 'es' ? 'Ingresá tu nombre.' : 'Please enter your name.';
-    msgEl.style.color = '#ff6b6b'; msgEl.style.display = 'block'; return;
-  }
-  if (!email || !email.includes('@')) {
-    msgEl.textContent = lang === 'es' ? 'Ingresá un email válido.' : 'Please enter a valid email.';
-    msgEl.style.color = '#ff6b6b'; msgEl.style.display = 'block'; return;
-  }
-
+  if (!nombre) { msgEl.textContent = lang==='es'?'Ingresá tu nombre.':'Please enter your name.'; msgEl.style.color='#ff6b6b'; msgEl.style.display='block'; return; }
+  if (!email || !email.includes('@')) { msgEl.textContent = lang==='es'?'Ingresá un email válido.':'Please enter a valid email.'; msgEl.style.color='#ff6b6b'; msgEl.style.display='block'; return; }
   btn.disabled = true;
-  btn.textContent = lang === 'es' ? 'Guardando...' : 'Saving...';
-
-  try {
-    await sb.from('downloads').insert({ nombre, email });
-    loadDownloadCounter();
-  } catch(e) {
-    // Si falla Supabase, igual dejamos descargar
-    console.warn('Supabase insert error:', e);
-  }
-
-  // Mostrar éxito y arrancar descarga
+  btn.textContent = lang==='es'?'Guardando...':'Saving...';
+  try { await sb.from('downloads').insert({ nombre, email }); loadDownloadCounter(); } catch(e) { console.warn(e); }
   document.getElementById('dl-form').style.display = 'none';
   document.getElementById('dl-success').style.display = 'block';
   document.getElementById('dl-fallback').href = DOWNLOAD_URL;
-
-  // Arrancar descarga automática
-  const a = document.createElement('a');
-  a.href = DOWNLOAD_URL;
-  a.click();
-
+  document.getElementById('dl-fallback2').href = DOWNLOAD_URL;
+  const a = document.createElement('a'); a.href = DOWNLOAD_URL; a.click();
   btn.disabled = false;
 }
+async function submitNewsletter() {
+  const email = document.getElementById('nl-email').value.trim();
+  const msgEl = document.getElementById('nl-msg');
+  const lang  = document.body.classList.contains('en') ? 'en' : 'es';
+  if (!email || !email.includes('@')) { msgEl.textContent = lang==='es'?'Email inválido.':'Invalid email.'; msgEl.style.color='#ff6b6b'; return; }
+  try {
+    await sb.from('downloads').insert({ nombre:'newsletter', email });
+    msgEl.textContent = lang==='es'?'✅ ¡Listo! Te avisamos cuando haya novedades.':'✅ Done! We\'ll notify you of updates.';
+    msgEl.style.color = '#6c63ff';
+    document.getElementById('nl-email').value = '';
+  } catch(e) { msgEl.textContent = lang==='es'?'Error. Intentá de nuevo.':'Error. Try again.'; msgEl.style.color='#ff6b6b'; }
+}
 
-// ============================================================
-// ESCENA 3D DE FONDO (galaxia -> hélice -> núcleo)
-// ============================================================
-(function initBackgroundScene() {
-  if (typeof THREE === 'undefined') return; // si el CDN no cargo, no rompemos el resto del sitio
+// =====================================================
+// 3D BACKGROUND — KINO EYE ORBE CON SHADERS
+// =====================================================
+(function init3D() {
+  if (typeof THREE === 'undefined') return;
 
-  const container = document.getElementById('scene-container');
-  if (!container) return;
+  const canvas = document.getElementById('gl-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 6, 16); // empieza lejos para el vuelo de entrada
-  camera.lookAt(0, 0, 0);
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 5.5);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  container.appendChild(renderer.domElement);
-
-  const PARTICLE_COUNT = 7000;
-  const colorCore = new THREE.Color('#ffffff');
-  const colorMid  = new THREE.Color('#4fc3f7');
-  const colorEdge = new THREE.Color('#6c63ff');
-
-  function makeGalaxy() {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    const col = new Float32Array(PARTICLE_COUNT * 3);
-    const ARMS = 4, SPIN = 1.6, RAND = 0.4;
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const radius = Math.random() * 5;
-      const armAngle = ((i % ARMS) / ARMS) * Math.PI * 2;
-      const angle = armAngle + radius * SPIN;
-      const rx = (Math.random()-0.5) * RAND * radius;
-      const ry = (Math.random()-0.5) * RAND * 0.3;
-      const rz = (Math.random()-0.5) * RAND * radius;
-      const i3 = i*3;
-      pos[i3]   = Math.cos(angle) * radius + rx;
-      pos[i3+1] = ry;
-      pos[i3+2] = Math.sin(angle) * radius + rz;
-      const t = radius / 5;
-      const c = t < 0.3 ? colorCore.clone().lerp(colorMid, t/0.3) : colorMid.clone().lerp(colorEdge, (t-0.3)/0.7);
-      col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+  // --- Shaders del ojo ---
+  const eyeVertexShader = `
+    uniform float uTime;
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying vec3 vViewPos;
+    void main() {
+      vUv = uv;
+      vNormal = normalize(normalMatrix * normal);
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      vViewPos = -mv.xyz;
+      gl_Position = projectionMatrix * mv;
     }
-    return { pos, col };
-  }
+  `;
 
-  function makeHelix() {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    const col = new Float32Array(PARTICLE_COUNT * 3);
-    const HEIGHT = 9, RADIUS = 1.6, TURNS = 4;
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const strand = i % 2;
-      const tt = i / PARTICLE_COUNT;
-      const y = (tt - 0.5) * HEIGHT;
-      const angle = tt * Math.PI * 2 * TURNS + strand * Math.PI;
-      const jitter = (Math.random() - 0.5) * 0.12;
-      const i3 = i*3;
-      pos[i3]   = Math.cos(angle) * (RADIUS + jitter);
-      pos[i3+1] = y + (Math.random()-0.5)*0.05;
-      pos[i3+2] = Math.sin(angle) * (RADIUS + jitter);
-      const c = strand === 0 ? colorMid.clone().lerp(colorCore, 0.3) : colorEdge.clone().lerp(colorCore, 0.2);
-      col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+  const eyeFragmentShader = `
+    uniform float uTime;
+    uniform vec3 uColor1;
+    uniform vec3 uColor2;
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying vec3 vViewPos;
+
+    float sdEllipse(vec2 p, vec2 ab) {
+      p = abs(p); if(p.x > p.y) { p = p.yx; ab = ab.yx; }
+      float l = ab.y*ab.y - ab.x*ab.x;
+      float m = ab.x*p.x/l, m2=m*m;
+      float n = ab.y*p.y/l, n2=n*n;
+      float c = (m2+n2-1.0)/3.0;
+      float c3 = c*c*c;
+      float q = c3 + m2*n2*2.0;
+      float d = c3 + m2*n2;
+      float g = m + m*n2;
+      float co;
+      if(d < 0.0) {
+        float h = acos(q/c3)/3.0;
+        float s = cos(h);
+        float t = sin(h)*sqrt(3.0);
+        float rx = sqrt(-c*(s+t+2.0)+m2);
+        float ry = sqrt(-c*(s-t+2.0)+m2);
+        co = (ry+sign(l)*rx+abs(g)/(rx*ry)-m)/2.0;
+      } else {
+        float h = 2.0*m*n*sqrt(d);
+        float s = sign(q+h)*pow(abs(q+h),1.0/3.0);
+        float u = sign(q-h)*pow(abs(q-h),1.0/3.0);
+        float rx = -s-u-c*4.0+2.0*m2;
+        float ry = (s-u)*sqrt(3.0);
+        float rm = sqrt(rx*rx+ry*ry);
+        co = (ry/sqrt(rm-rx)+2.0*g/rm-m)/2.0;
+      }
+      vec2 r = ab*vec2(co, sqrt(1.0-co*co));
+      return length(r-p)*sign(p.y-r.y);
     }
-    return { pos, col };
-  }
 
-  function makeCore() {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    const col = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const idx = i + 0.5;
-      const phi = Math.acos(1 - 2*idx/PARTICLE_COUNT);
-      const theta = Math.PI * (1 + Math.sqrt(5)) * idx;
-      const r = 2.6 * Math.pow(Math.random(), 0.5);
-      const i3 = i*3;
-      pos[i3]   = r * Math.sin(phi) * Math.cos(theta);
-      pos[i3+1] = r * Math.cos(phi) * 0.6;
-      pos[i3+2] = r * Math.sin(phi) * Math.sin(theta);
-      const t = r / 2.6;
-      const c = colorCore.clone().lerp(colorMid, t).lerp(colorEdge, t*0.4);
-      col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+    void main() {
+      vec3 viewDir = normalize(vViewPos);
+      float fresnel = pow(1.0 - max(dot(vNormal, viewDir), 0.0), 2.5);
+
+      vec2 uv = vUv - 0.5;
+      float dist = length(uv);
+
+      // Pupila tipo ojo de gato (elipse vertical)
+      float pupil = sdEllipse(uv, vec2(0.045, 0.18));
+      float pupilMask = smoothstep(0.01, -0.01, pupil);
+
+      // Iris con anillos
+      float irisR = smoothstep(0.22, 0.18, dist);
+      float rings = sin(dist * 28.0 - uTime * 0.6) * 0.5 + 0.5;
+      float rings2 = sin(dist * 14.0 + uTime * 0.3) * 0.5 + 0.5;
+
+      // Colores del iris
+      vec3 col1 = uColor1; // cyan
+      vec3 col2 = uColor2; // purple
+      vec3 irisColor = mix(col1, col2, rings * 0.7 + rings2 * 0.3);
+      irisColor = mix(irisColor * 0.6, irisColor * 1.4, dist / 0.22);
+
+      // Esclera oscura con glow
+      vec3 scleraColor = vec3(0.01, 0.01, 0.04);
+
+      // Color pupila (casi negra con destellos)
+      vec3 pupilColor = vec3(0.01, 0.015, 0.03);
+      float pupilGlint = smoothstep(0.01, 0.0, length(uv - vec2(0.02, 0.05)));
+      pupilColor += vec3(0.6, 0.8, 1.0) * pupilGlint * 0.8;
+
+      // Combinar
+      vec3 color = scleraColor;
+      color = mix(color, irisColor, irisR * (1.0 - pupilMask));
+      color = mix(color, pupilColor, pupilMask);
+
+      // Fresnel glow en el borde
+      color += col1 * fresnel * 0.9;
+      color += col2 * fresnel * fresnel * 1.2;
+
+      // Brillo central tenue
+      float centerGlow = smoothstep(0.25, 0.0, dist);
+      color += col1 * centerGlow * 0.15;
+
+      // Pulso suave
+      float pulse = sin(uTime * 1.2) * 0.5 + 0.5;
+      color *= 0.88 + pulse * 0.12;
+
+      float alpha = smoothstep(0.5, 0.48, dist) + fresnel * 0.3;
+      alpha = min(alpha, 1.0);
+
+      gl_FragColor = vec4(color, alpha);
     }
-    return { pos, col };
-  }
+  `;
 
-  const shapeGalaxy = makeGalaxy();
-  const shapeHelix  = makeHelix();
-  const shapeCore   = makeCore();
-
-  const positions = new Float32Array(PARTICLE_COUNT * 3);
-  const colorsAttr = new Float32Array(PARTICLE_COUNT * 3);
-  positions.set(shapeGalaxy.pos);
-  colorsAttr.set(shapeGalaxy.col);
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('color', new THREE.BufferAttribute(colorsAttr, 3));
-  const material = new THREE.PointsMaterial({
-    size: 0.045, sizeAttenuation: true, depthWrite: false,
-    blending: THREE.AdditiveBlending, vertexColors: true,
-    transparent: true, opacity: 0.88,
+  // Esfera principal del ojo
+  const eyeGeo = new THREE.SphereGeometry(1.0, 128, 128);
+  const eyeMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime:   { value: 0 },
+      uColor1: { value: new THREE.Color('#4fc3f7') },
+      uColor2: { value: new THREE.Color('#6c63ff') },
+    },
+    vertexShader:   eyeVertexShader,
+    fragmentShader: eyeFragmentShader,
+    transparent: true,
+    depthWrite: false,
   });
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
+  const eyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
+  scene.add(eyeMesh);
 
-  const core = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.9 }));
-  scene.add(core);
-  const glow = new THREE.Mesh(new THREE.SphereGeometry(0.9, 32, 32), new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent:true, opacity:0.15 }));
-  scene.add(glow);
+  // Anillo exterior (Torus)
+  const ringGeo = new THREE.TorusGeometry(1.45, 0.012, 8, 180);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x4fc3f7, transparent:true, opacity:0.35 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI * 0.08;
+  scene.add(ring);
 
-  const starCount = 1200;
-  const starPositions = new Float32Array(starCount*3);
-  for (let i=0;i<starCount;i++){
-    starPositions[i*3]=(Math.random()-0.5)*60;
-    starPositions[i*3+1]=(Math.random()-0.5)*60;
-    starPositions[i*3+2]=(Math.random()-0.5)*60;
-  }
-  const starGeo = new THREE.BufferGeometry();
-  starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions,3));
-  const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color:0xffffff, size:0.025, transparent:true, opacity:0.55 }));
-  scene.add(stars);
+  const ring2Geo = new THREE.TorusGeometry(1.62, 0.007, 8, 180);
+  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent:true, opacity:0.2 });
+  const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+  ring2.rotation.x = -Math.PI * 0.12;
+  ring2.rotation.y = Math.PI * 0.15;
+  scene.add(ring2);
 
-  // ---- Anclajes reales del sitio ----
-  const elFeatures    = document.getElementById('features');
-  const elComparacion = document.getElementById('comparacion');
-  const elRequisitos  = document.getElementById('requisitos');
+  // Glow sphere (grande, aditiva)
+  const glowGeo = new THREE.SphereGeometry(1.35, 32, 32);
+  const glowMat = new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent:true, opacity:0.07, side: THREE.BackSide });
+  scene.add(new THREE.Mesh(glowGeo, glowMat));
 
-  let yFeatures = 0, yComparacion = 0, yRequisitos = 0;
-  function recalcAnchors() {
-    yFeatures    = elFeatures    ? elFeatures.getBoundingClientRect().top + window.scrollY : window.innerHeight;
-    yComparacion = elComparacion ? elComparacion.getBoundingClientRect().top + window.scrollY : yFeatures + window.innerHeight;
-    yRequisitos  = elRequisitos  ? elRequisitos.getBoundingClientRect().top + window.scrollY : yComparacion + window.innerHeight;
-  }
-  recalcAnchors();
+  const glowGeo2 = new THREE.SphereGeometry(1.8, 32, 32);
+  const glowMat2 = new THREE.MeshBasicMaterial({ color: 0x4fc3f7, transparent:true, opacity:0.03, side: THREE.BackSide });
+  scene.add(new THREE.Mesh(glowGeo2, glowMat2));
 
-  const tmpPos = new Float32Array(PARTICLE_COUNT * 3);
-  const tmpCol = new Float32Array(PARTICLE_COUNT * 3);
-  const DIM_OPACITY = 0.16;
-  const DIM_DISTANCE = 700; // px tras "requisitos" hasta llegar a la opacidad minima
-  const SHAPES = [shapeGalaxy, shapeHelix, shapeCore];
+  // Partículas orbitando
+  const PART = 3500;
+  const pPos = new Float32Array(PART * 3);
+  const pCol = new Float32Array(PART * 3);
+  const c1 = new THREE.Color('#4fc3f7');
+  const c2 = new THREE.Color('#6c63ff');
+  const pPhase = new Float32Array(PART);
+  const pRadius = new Float32Array(PART);
+  const pSpeed = new Float32Array(PART);
+  const pInclination = new Float32Array(PART);
 
-  // progress objetivo: 0 = galaxia, 1 = helice, 2 = nucleo (continuo, calculado del scroll real)
-  function getTargetProgress() {
-    const scrollY = window.scrollY;
-    if (scrollY < yFeatures) return 0;
-    if (scrollY < yComparacion) {
-      return (scrollY - yFeatures) / Math.max(1, (yComparacion - yFeatures));
-    }
-    if (scrollY < yRequisitos) {
-      return 1 + (scrollY - yComparacion) / Math.max(1, (yRequisitos - yComparacion));
-    }
-    return 2;
-  }
-
-  function getTargetDimOpacity() {
-    const scrollY = window.scrollY;
-    if (scrollY <= yRequisitos) return 1;
-    const distPast = scrollY - yRequisitos;
-    const dimT = Math.min(distPast / DIM_DISTANCE, 1);
-    return 1 - dimT * (1 - DIM_OPACITY);
+  for (let i = 0; i < PART; i++) {
+    const r = 1.3 + Math.pow(Math.random(), 0.6) * 2.8;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const theta = Math.random() * Math.PI * 2;
+    pRadius[i] = r;
+    pPhase[i] = theta;
+    pSpeed[i] = (0.15 + Math.random() * 0.35) * (Math.random() < 0.5 ? 1 : -1);
+    pInclination[i] = phi;
+    pPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    pPos[i*3+1] = r * Math.cos(phi) * 0.5;
+    pPos[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+    const t = Math.random();
+    const c = c1.clone().lerp(c2, t);
+    pCol[i*3]=c.r; pCol[i*3+1]=c.g; pCol[i*3+2]=c.b;
   }
 
-  // Valores "actuales" que persiguen al objetivo cada frame, con inercia (mas fluido que ligar 1:1 al scroll)
-  let currentProgress = 0;
-  let currentOpacity = 1;
-  const SMOOTH = 0.045; // mas chico = mas "viscoso"/fluido, mas grande = mas directo
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+  const pMat = new THREE.PointsMaterial({
+    size: 0.022, sizeAttenuation:true, vertexColors:true,
+    transparent:true, opacity:0.7, depthWrite:false, blending:THREE.AdditiveBlending,
+  });
+  const points = new THREE.Points(pGeo, pMat);
+  scene.add(points);
 
-  function applyBlend() {
-    const targetProgress = getTargetProgress();
-    const targetOpacity  = getTargetDimOpacity();
-
-    const progressDelta = targetProgress - currentProgress;
-    const opacityDelta = targetOpacity - currentOpacity;
-    const settled = Math.abs(progressDelta) < 0.0005 && Math.abs(opacityDelta) < 0.0005;
-
-    if (settled) {
-      // Ya llegamos al objetivo: nada que recalcular este frame, ahorra CPU.
-      return;
-    }
-
-    currentProgress += progressDelta * SMOOTH;
-    currentOpacity   += opacityDelta * SMOOTH;
-    if (Math.abs(targetProgress - currentProgress) < 0.0005) currentProgress = targetProgress;
-    if (Math.abs(targetOpacity - currentOpacity) < 0.0005) currentOpacity = targetOpacity;
-
-    const from = Math.min(Math.floor(currentProgress), 1);
-    const to = from + 1;
-    const t = Math.min(Math.max(currentProgress - from, 0), 1);
-    const ease = t*t*(3-2*t);
-
-    const a = SHAPES[from], b = SHAPES[to];
-    for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
-      tmpPos[i] = a.pos[i] + (b.pos[i] - a.pos[i]) * ease;
-      tmpCol[i] = a.col[i] + (b.col[i] - a.col[i]) * ease;
-    }
-    geometry.attributes.position.array.set(tmpPos);
-    geometry.attributes.color.array.set(tmpCol);
-    geometry.attributes.position.needsUpdate = true;
-    geometry.attributes.color.needsUpdate = true;
-
-    // Nucleo brillante: solo visible cerca de la escena galaxia (progress cercano a 0)
-    const coreOpacity = Math.max(0, 1 - currentProgress) * 0.9;
-    core.material.opacity = coreOpacity;
-    glow.material.opacity = coreOpacity * 0.17;
-
-    container.style.opacity = String(currentOpacity);
+  // Estrellas de fondo
+  const sCnt = 2000;
+  const sPos = new Float32Array(sCnt * 3);
+  for (let i = 0; i < sCnt; i++) {
+    sPos[i*3]   = (Math.random()-0.5)*80;
+    sPos[i*3+1] = (Math.random()-0.5)*80;
+    sPos[i*3+2] = (Math.random()-0.5)*80;
   }
+  const sGeo = new THREE.BufferGeometry();
+  sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  const sMat = new THREE.PointsMaterial({ color:0xffffff, size:0.02, transparent:true, opacity:0.4 });
+  scene.add(new THREE.Points(sGeo, sMat));
 
-  // ---- Vuelo de entrada de la camara ----
-  const flyTarget = { y: 3.2, z: 7 };
-  const flyStart  = { y: camera.position.y, z: camera.position.z };
-  const flyDuration = 2200;
-  const flyStartTime = performance.now();
-  function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
-
-  // ---- Paralaje sutil con el mouse (solo cerca del hero) ----
-  let mouseX = 0, mouseY = 0;
-  window.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  // --- Parallax mouse ---
+  let mx = 0, my = 0;
+  window.addEventListener('mousemove', e => {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
   });
 
-  // ---- Pausar render si la pestaña no esta visible (ahorro recursos) ----
-  let tabVisible = true;
-  document.addEventListener('visibilitychange', () => { tabVisible = !document.hidden; });
+  // --- Scroll: mueve cámara hacia atrás, ojo se aleja ---
+  function getScrollProgress() {
+    const h = document.body.scrollHeight - window.innerHeight;
+    return h > 0 ? window.scrollY / h : 0;
+  }
+
+  let tabVis = true;
+  document.addEventListener('visibilitychange', () => { tabVis = !document.hidden; });
+
+  // vuelo de entrada
+  const flyDur = 2400;
+  const flyStart = performance.now();
+  camera.position.set(0, 0, 12);
+
+  // Camara target
+  let camZ = 5.5, camX = 0, camY = 0;
+
+  function animate(now) {
+    requestAnimationFrame(animate);
+    if (!tabVis) return;
+
+    const t = now * 0.001;
+    const scroll = getScrollProgress();
+
+    // update shader time
+    eyeMat.uniforms.uTime.value = t;
+
+    // Vuelo de entrada
+    const flyT = Math.min((now - flyStart) / flyDur, 1);
+    const flyEase = 1 - Math.pow(1 - flyT, 3);
+
+    // Camara base según scroll: se aleja y sube ligeramente
+    const targetZ = 5.5 + scroll * 6;
+    const targetY = scroll * 1.2;
+    camZ += (targetZ - camZ) * 0.04;
+    camY += (targetY - camY) * 0.04;
+    camX += (mx * 0.5 - camX) * 0.03;
+
+    if (flyT < 1) {
+      camera.position.z = 12 - (12 - camZ) * flyEase;
+    } else {
+      camera.position.z = camZ;
+    }
+    camera.position.x = camX;
+    camera.position.y = camY - my * 0.3;
+    camera.lookAt(0, 0, 0);
+
+    // Rotar ojo suavemente
+    eyeMesh.rotation.y = t * 0.08 + mx * 0.15;
+    eyeMesh.rotation.x = my * 0.1;
+
+    // Anillos rotan
+    ring.rotation.z  = t * 0.12;
+    ring2.rotation.z = -t * 0.09;
+    ring.rotation.y  = t * 0.04 + mx * 0.1;
+
+    // Actualizar partículas
+    const posArr = pGeo.attributes.position.array;
+    for (let i = 0; i < PART; i++) {
+      const angle = pPhase[i] + t * pSpeed[i] * 0.18;
+      const phi = pInclination[i];
+      const r = pRadius[i];
+      posArr[i*3]   = r * Math.sin(phi) * Math.cos(angle);
+      posArr[i*3+1] = r * Math.cos(phi) * 0.5 + Math.sin(t * 0.3 + pPhase[i]) * 0.08;
+      posArr[i*3+2] = r * Math.sin(phi) * Math.sin(angle);
+    }
+    pGeo.attributes.position.needsUpdate = true;
+
+    // Opacidad de la escena: se atenúa en las últimas secciones
+    const dimStart = 0.55;
+    const dimT = Math.max(0, (scroll - dimStart) / (1 - dimStart));
+    const sceneOpacity = 1 - dimT * 0.82;
+    canvas.style.opacity = String(sceneOpacity);
+
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animate);
 
   window.addEventListener('resize', () => {
-    recalcAnchors();
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-
-  function animate(now) {
-    requestAnimationFrame(animate);
-    if (!tabVisible) return;
-    if (document.body.classList.contains('light')) return; // no renderizar en modo claro
-
-    applyBlend();
-
-    const scrollY = window.scrollY;
-    const flyT = Math.min((now - flyStartTime) / flyDuration, 1);
-    if (flyT < 1 && scrollY < yFeatures) {
-      const eased = easeOutCubic(flyT);
-      camera.position.y = flyStart.y + (flyTarget.y - flyStart.y) * eased;
-      camera.position.z = flyStart.z + (flyTarget.z - flyStart.z) * eased;
-    } else if (scrollY < yFeatures) {
-      camera.position.y = flyTarget.y + mouseY * 0.4;
-      camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.03;
-    } else {
-      // Mas alla del hero: camara fija razonable, sin paralaje de mouse
-      camera.position.x += (0 - camera.position.x) * 0.05;
-      camera.position.y += (flyTarget.y - camera.position.y) * 0.02;
-    }
-    camera.lookAt(0, 0, 0);
-
-    particles.rotation.y += 0.0006;
-    stars.rotation.y += 0.0001;
-    const t = now * 0.001;
-    core.scale.setScalar(1 + Math.sin(t*1.5)*0.06);
-    glow.scale.setScalar(1 + Math.sin(t*1.5)*0.1);
-
-    renderer.render(scene, camera);
-  }
-
-  requestAnimationFrame(animate);
-
-  // Recalcular anclajes despues de que cargue todo el contenido (imagenes, fuentes, etc.)
-  window.addEventListener('load', recalcAnchors);
 })();
 </script>
-
 </body>
 </html>
